@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Squaredle Maker</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.0/css/all.min.css">
+    <link rel="icon" href="assets/logo.png">
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+</head>
+<body>
+    <nav>
+        <div id="nav__logo"><img src="assets/logo.png" height="30" alt="S">quaredle Maker</div>
+    </nav>
+    <section>
+        <aside>
+            <h1>Settings/Results</h1>
+            <div id="side__size" class="flex-center">
+                <label for="puzzle_size">Puzzle Size:</label>
+                <input id="puzzle_size" name="size" type="number" value="3" max="5" min="3">
+            </div>
+        </aside>
+        <main>
+            <table id="puzzle"></table>
+        </main>
+    </section>
+    <script src="script.js" defer></script>
+</body>
+</html>

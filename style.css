@@ -1,0 +1,105 @@
+*, *::before, *::after{
+    box-sizing: border-box;
+}
+
+:root{
+    --width: 1000px;
+    --theme: #b82828;
+    --color: white;
+}
+
+body{
+    background: black;
+    margin: 0;
+    color: var(--color);
+    font-family: Arial, serif;
+}
+
+nav{
+    width: 100vw;
+    padding: 0 calc((100% - var(--width)) / 2);
+    background: var(--theme);
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 50px;
+}
+
+section{
+    display: flex;
+    width: var(--width);
+    margin: auto;
+}
+
+#nav__logo{
+    display: flex;
+    align-items: center;
+    column-gap: 2px;
+    font-size: 28px;
+}
+
+main{
+    display: inline-block;
+    width: calc(var(--width) / 2 - 10px);
+}
+
+aside{
+    display: inline-block;
+    width: calc(var(--width) / 2 - 10px);
+    font-size: 24px;
+}
+
+.square {
+    background: #202020;
+    border: 1px solid gray;
+    border-radius: 10px;
+    font-size: 52px;
+    width: 90px;
+    height: 90px;
+    font-weight: bolder;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    margin: 7px;
+}
+
+.flex-center{
+    display: flex;
+    align-items: center;
+}
+
+#side__size{
+    column-gap: 10px;
+}
+
+#puzzle_size{
+    background: none;
+    border: none;
+    border-bottom: 2px solid var(--theme);
+    width: 40px;
+    color: white;
+    outline: none;
+    text-align: center;
+    font-size: 18px;
+}
+
+.square input{
+    background: none;
+    border: none;
+    width: 80%;
+    height: 80%;
+    text-align: center;
+    color: white;
+    font-size: 52px;
+    font-weight: bolder;
+    outline: none;
+    text-transform: capitalize;
+}
+
+@media (max-width: 1000px){
+    :root{
+        --width: 100vw;
+    }
+}
