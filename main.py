@@ -1,9 +1,11 @@
 import logging
 import textwrap
 
+import nltk
 from nltk.corpus import words
 from flask import Flask, send_file, request, jsonify
 
+nltk.download('words')
 words_list = set(words.words())
 app = Flask("Squaredle Solver")
 logging.getLogger("werkzeug").setLevel(40)
