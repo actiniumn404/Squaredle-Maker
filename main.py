@@ -1,20 +1,23 @@
 import logging
+import random
+import string
 import textwrap
+import time
+import requests
 
-import nltk
-from nltk.corpus import words
 from flask import Flask, send_file, request, jsonify
 
-nltk.download('words')
-words_list = set(words.words())
+words_list = requests.get("https://raw.githubusercontent.com/dwyl/english-words/master/words_alpha.txt").text.split("\r\n")
 app = Flask("Squaredle Solver")
 logging.getLogger("werkzeug").setLevel(40)
 
 
-def dfs(visited, row, col, grid, curWord, res):
-    if len(curWord) >= 4 and curWord in words_list:
-        res.append(curWord)
-        print(curWord)
+
+def dfs(visited: list, row: int, col: int, target: str, grid: list, curWord: str, res: list):
+    if len(curWord) > len(target) or not target.startswith(curWord):
+        return False
+    if curWord == target:
+        return True
 
     visited[col][row] = True
 
@@ -22,11 +25,13 @@ def dfs(visited, row, col, grid, curWord, res):
         new_row = row + plus_row
         new_col = col + plus_col
         if 0 <= new_row < len(grid) and 0 <= new_col < len(grid) and not visited[new_col][new_row]:
-            dfs(visited, new_row, new_col, grid, curWord + grid[new_col][new_row], res)
+            stop = dfs(visited, new_row, new_col, target, grid, curWord + grid[new_col][new_row], res)
+            if stop:
+                return True
 
     visited[col][row] = False
 
-    return res
+    return False
 
 
 @app.route("/")
@@ -34,9 +39,17 @@ def page_home():
     return open("index.html", "r").read()
 
 
+@app.route("/favicon.ico")
+def favicon():
+    return send_file(f"assets/logo.png")
+
+
 @app.route('/<path:path>')
 def page_any(path):
-    return open(path, "r").read(), 200, {'Content-Type': f'text/{path.split(".")[-1]}; charset=utf-8'}
+    try:
+        return open(path, "r").read(), 200, {'Content-Type': f'text/{path.split(".")[-1]}; charset=utf-8'}
+    except FileNotFoundError:
+        return jsonify({"error": "FIle not found"})
 
 
 @app.route('/assets/<path:path>')
@@ -47,35 +60,44 @@ def page_asset(path):
 @app.route('/api/solve')
 def solve():
     size = request.args.get("size")
-    grid = request.args.get("grid")
+    orig_grid = request.args.get("grid")
 
     if not size:
         return jsonify({"error": "Missing required parameter: size"})
-    if not grid:
+    if not orig_grid:
         return jsonify({"error": "Missing required parameter: grid"})
     if not size.isnumeric():
         return jsonify({"error": "Size is not a number"})
     size = int(size)
     if not (3 <= size <= 5):
         return jsonify({"error": "Size must be between 3 and 5"})
-    if len(grid) != size * size:
+    if len(orig_grid) != size * size:
         return jsonify({"error": "Grid is not the declared size"})
 
-    grid = list(map(lambda x: list(x.lower()), textwrap.wrap(grid, size)))
-    print(grid)
-    res = []
+    grid = list(map(lambda x: list(x.lower()), textwrap.wrap(orig_grid, size)))
+    res = {}
+    coords = {}
 
-    for r in range(size):
-        for c in range(size):
-            res.extend(dfs(
+    for col in range(size):
+        for row in range(size):
+            coords[grid[col][row]] = coords.get(grid[col][row], []) + [(col, row)]
+
+    for word in words_list:
+        if len(word) <= 3:
+            continue
+        for c, r in coords.get(word[0], []):
+            result = dfs(
                 [[False for _ in range(size)] for _ in range(size)],
                 r,
                 c,
+                word,
                 grid,
                 grid[c][r],
-                [])
-            )
-    print(res)
+                res)
+
+            if result and result not in res.get(len(word), []):
+                res[len(word)] = res.get(len(word), []) + [word]
+
 
     return jsonify(res)
 
