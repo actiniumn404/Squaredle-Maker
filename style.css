@@ -16,7 +16,7 @@ body{
 }
 
 nav{
-    width: 100vw;
+    width: 100%;
     padding: 0 calc((100% - var(--width)) / 2);
     background: var(--theme);
     height: 40px;
@@ -44,21 +44,22 @@ main{
     width: calc(var(--width) / 2 - 10px);
 }
 
-aside{
+aside {
     width: calc(var(--width) / 2 - 10px);
     font-size: 24px;
     display: inline-flex;
     flex-direction: column;
     row-gap: 30px;
+    overflow: auto;
+    height: calc(100vh - 120px);
 }
 
 .square {
     background: #202020;
     border: 1px solid gray;
     border-radius: 10px;
-    font-size: 52px;
-    width: 90px;
-    height: 90px;
+    width: calc((var(--width) / 2 - 10px) / var(--size) - 20px);
+    height: calc((var(--width) / 2 - 10px) / var(--size) - 20px);
     font-weight: bolder;
     display: inline-flex;
     align-items: center;
@@ -94,17 +95,17 @@ aside{
     height: 80%;
     text-align: center;
     color: white;
-    font-size: 52px;
+    font-size: calc(0.5 * ((var(--width) / 2 - 10px) / var(--size) - 20px));
     font-weight: bolder;
     outline: none;
     text-transform: capitalize;
 }
 
-aside :is(h1, h2){
+aside :is(h1, h2, h4){
     margin: 0;
 }
 
-#process {
+.coolbtn {
     width: fit-content;
     width: -moz-fit-content;
     background: none;
@@ -118,11 +119,11 @@ aside :is(h1, h2){
     transition: 0.2s;
 }
 
-#process:hover{
+.coolbtn:hover{
     opacity: 0.8;
 }
 
-#process:active, #process:disabled{
+.coolbtn:active, .coolbtn:disabled{
     opacity: 0.5;
 }
 
@@ -131,7 +132,7 @@ aside :is(h1, h2){
     display: grid;
     list-style: none;
     grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
-    margin: 0;
+    margin: 30px 0px;
     padding: 0;
 }
 
