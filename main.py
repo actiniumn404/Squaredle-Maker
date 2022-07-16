@@ -1,8 +1,5 @@
 import logging
-import random
-import string
 import textwrap
-import time
 import requests
 
 from flask import Flask, send_file, request, jsonify
@@ -102,4 +99,4 @@ def solve():
     return jsonify(res)
 
 
-app.run("0.0.0.0", port=8080)
+app.run()
