@@ -40,8 +40,11 @@ section{
 }
 
 main{
-    display: inline-block;
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
     width: calc(var(--width) / 2 - 10px);
+    row-gap: 20px;
 }
 
 aside {
@@ -127,13 +130,21 @@ aside :is(h1, h2, h4){
     opacity: 0.5;
 }
 
+label[for="name_input"]{
+    font-size: 28px;
+    font-weight: bolder;
+}
 
-#results ul {
-    display: grid;
-    list-style: none;
-    grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
-    margin: 30px 0px;
-    padding: 0;
+#name_input{
+    background: none;
+    border: none;
+    border-bottom: 3px solid var(--theme);
+    font-size: 22px;
+    text-align: center;
+    width: 200px;
+    margin-left: 20px;
+    color: white;
+    outline: none;
 }
 
 

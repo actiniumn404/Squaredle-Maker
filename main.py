@@ -69,7 +69,7 @@ def solve():
     if not size.isnumeric():
         return jsonify({"error": "Size is not a number"})
     size = int(size)
-    if not (3 <= size <= 5):
+    if not (3 <= size <= 10):
         return jsonify({"error": "Size must be between 3 and 5"})
     if len(orig_grid) != size * size:
         return jsonify({"error": "Grid is not the declared size"})

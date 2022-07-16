@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="results.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.0/css/all.min.css">
     <link rel="icon" href="assets/logo.png">
 
@@ -19,14 +20,20 @@
             <h1>Settings</h1>
             <button id="process" class="coolbtn">See Results</button>
             <button id="exportDscd" class="coolbtn">Export to Squaredle Discord</button>
+            <button id="printResults" class="coolbtn">Print Results</button>
             <div id="side__size" class="flex-center">
                 <label for="puzzle_size">Puzzle Size:</label>
-                <input id="puzzle_size" name="size" type="number" value="3" max="7" min="3">
+                <input id="puzzle_size" name="size" type="number" value="3" max="10" min="3">
             </div>
             <h1>Results</h1>
+            <span id="time_numwords"></span>
             <div id="results"></div>
         </aside>
         <main>
+            <div id="puzzle_name" class="flex-center">
+                <label for="name_input">Puzzle Name:</label>
+                <input id="name_input" value="Untitled Squaredle">
+            </div>
             <table id="puzzle"></table>
         </main>
     </section>
