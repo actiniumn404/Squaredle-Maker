@@ -1,6 +1,7 @@
 import logging
 import textwrap
 import requests
+import os
 
 from flask import Flask, send_file, request, jsonify
 
@@ -95,8 +96,8 @@ def solve():
             if result and result not in res.get(len(word), []):
                 res[len(word)] = res.get(len(word), []) + [word]
 
-
     return jsonify(res)
 
 
-app.run(port=33507)
+port = int(os.environ.get('PORT', 5000))
+app.run(host='0.0.0.0', port=port)
