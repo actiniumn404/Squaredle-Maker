@@ -99,4 +99,4 @@ def solve():
     return jsonify(res)
 
 
-app.run()
+app.run(port=33507)
