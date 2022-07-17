@@ -97,7 +97,3 @@ def solve():
                 res[len(word)] = res.get(len(word), []) + [word]
 
     return jsonify(res)
-
-
-port = int(os.environ.get('PORT', 5000))
-app.run(host='0.0.0.0', port=port)
