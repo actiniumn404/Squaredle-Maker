@@ -30,6 +30,46 @@ const load_puzzle = (puzzle) => {
     }
 }
 
+const get_results = (words, cutoff, start = Date.now()) => {
+    $("#results").html("")
+    num_words = 0
+    let num_awkward = 0;
+    words["Bonus"] = []
+
+    for (size in words){
+        let width = 70
+        let mywords = 0
+        let word_list = [...new Set(words[size])]
+        word_list.sort()
+
+
+        $("#results").append(`<h4>${size} letters</h4><ul></ul>`)
+        for ([word, freq] of word_list){
+            if (freq < cutoff && size !== "Bonus"){
+                words["Bonus"].push([word, freq])
+                continue
+            }
+            if (awkward_words.has(word)){
+                num_awkward += 1;
+            }
+            mywords += 1
+            num_words += 1
+            $("#results ul:last-of-type").append(`<li style="width: fit-content;width: -moz-fit-content;${awkward_words.has(word) ? "color: mediumpurple": ""}">${word}</li>`)
+            width = Math.max(width, $("#results ul:last-of-type li:last-of-type").width())
+        }
+        if (mywords){
+            $("#results ul:last-of-type li").css("width", "initial")
+            $("#results ul:last-of-type").css("grid-template-columns", `repeat(auto-fill, minmax(${Math.ceil(width) + 10}px, 1fr))`)
+            $("#results h4:last-of-type").append(` (${mywords} words)`)
+        }else{
+            $("#results :is(h4, ul):last-of-type").remove()
+        }
+    }
+
+    $("#time_numwords").html(`${num_words} result${num_words !== 1 ? "s": ""} in ${((Date.now() - start) / 1000).toFixed(2)} seconds<br>
+    ${num_awkward} awkward word${num_awkward !== 1 ? "s": ""}`)
+}
+
 $("#puzzle_size").click(() => {
     generate_puzzle($("#puzzle_size").val())
 })
@@ -42,38 +82,13 @@ $("#process").click(async () => {
     let res = await fetch(`/api/solve?size=${$("#puzzle_size").val()}&grid=${get_puzzle()}`)
     res = await res.json()
 
-    $("#results").html("")
     btn.prop("disabled", false)
 
     if (res["error"]){
         return $("#results").html(`<strong style="color: var(--theme)">ERROR: ${res["error"]}</strong>`)
     }
 
-    num_words = 0
-    let num_awkward = 0;
-
-    for (size in res){
-        let width = 70
-        let word_list = [...new Set(res[size])]
-        word_list.sort()
-
-
-        $("#results").append(`<h4>${size} letters</h4><ul></ul>`)
-        for (word of word_list){
-            num_words += 1
-            if (awkward_words.has(word)){
-                num_awkward += 1;
-            }
-            $("#results ul:last-of-type").append(`<li style="width: fit-content;width: -moz-fit-content;${awkward_words.has(word) ? "color: mediumpurple": ""}">${word}</li>`)
-            width = Math.max(width, $("#results ul:last-of-type li:last-of-type").width())
-        }
-        $("#results ul:last-of-type li").css("width", "initial")
-        $("#results ul:last-of-type").css("grid-template-columns", `repeat(auto-fill, minmax(${Math.ceil(width) + 10}px, 1fr))`)
-    }
-
-    $("#time_numwords").html(`${num_words} result${num_words !== 1 ? "s": ""} in ${((Date.now() - start) / 1000).toFixed(2)} seconds<br>
-    ${num_awkward} awkward word${num_awkward !== 1 ? "s": ""}`)
-
+    get_results(res, $("#freq_cutoff").val(), start)
 })
 
 $("#exportDscd").click(() => {

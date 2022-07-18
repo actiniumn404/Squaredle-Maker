@@ -76,15 +76,14 @@ aside {
     align-items: center;
 }
 
-#side__size{
+aside > div{
     column-gap: 10px;
 }
-
-#puzzle_size{
+aside > div > input{
     background: none;
     border: none;
     border-bottom: 2px solid var(--theme);
-    width: 40px;
+    width: 100px;
     color: white;
     outline: none;
     text-align: center;

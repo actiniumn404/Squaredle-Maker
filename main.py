@@ -1,9 +1,9 @@
 import logging
 import textwrap
 import requests
-import os
 
 from flask import Flask, send_file, request, jsonify
+from wordfreq import zipf_frequency
 
 words_list = requests.get("https://raw.githubusercontent.com/dwyl/english-words/master/words_alpha.txt").text.split("\r\n")
 app = Flask("Squaredle Solver")
@@ -94,6 +94,6 @@ def solve():
                 res)
 
             if result and result not in res.get(len(word), []):
-                res[len(word)] = res.get(len(word), []) + [word]
+                res[len(word)] = res.get(len(word), []) + [[word, zipf_frequency(word, lang="en")]]
 
     return jsonify(res)
