@@ -1,4 +1,6 @@
+let data = {}
 let num_words = 0
+let p_size = 3
 
 const generate_puzzle = (size) => {
     $("#puzzle_size").val(size)
@@ -22,6 +24,18 @@ const get_puzzle = () => {
     return res
 }
 
+const data_setify = (data) => {
+    let res = []
+    let res_set = new Set();
+    data.forEach((e) => {
+        if (!res_set.has(e[0])){
+            res_set.add(e[0])
+            res.push(e)
+        }
+    })
+    return res
+}
+
 const load_puzzle = (puzzle) => {
     generate_puzzle(Math.sqrt(puzzle.length))
     let squares = $(".square");
@@ -39,7 +53,7 @@ const get_results = (words, cutoff, start = Date.now()) => {
     for (size in words){
         let width = 70
         let mywords = 0
-        let word_list = [...new Set(words[size])]
+        let word_list = data_setify(words[size])
         word_list.sort()
 
 
@@ -70,8 +84,12 @@ const get_results = (words, cutoff, start = Date.now()) => {
     ${num_awkward} awkward word${num_awkward !== 1 ? "s": ""}`)
 }
 
-$("#puzzle_size").click(() => {
-    generate_puzzle($("#puzzle_size").val())
+$("#puzzle_size").on("change keyup input", () => {
+    let size = Number($("#puzzle_size").val())
+    if (size && 3 <= size && size <= 10) {
+        p_size = size
+        generate_puzzle(p_size)
+    }
 })
 
 $("#process").click(async () => {
@@ -79,8 +97,9 @@ $("#process").click(async () => {
     let start = Date.now()
     btn.prop("disabled", true)
 
-    let res = await fetch(`/api/solve?size=${$("#puzzle_size").val()}&grid=${get_puzzle()}`)
+    let res = await fetch(`/api/solve?size=${p_size}&grid=${get_puzzle()}`)
     res = await res.json()
+    data = res
 
     btn.prop("disabled", false)
 
@@ -93,7 +112,7 @@ $("#process").click(async () => {
 
 $("#exportDscd").click(() => {
     let index = 0;
-    let size = $("#puzzle_size").val();
+    let size = p_size;
     let res = ""
     for (let letter of get_puzzle()){
         res += `:squaredle${letter.toUpperCase()}: `
@@ -116,6 +135,10 @@ $("#printResults").click(() => {
 ${$("#results").prop("outerHTML")}
 `
 })
+
+window.onbeforeunload = function() {
+    return function(){return true};
+}
 
 
 generate_puzzle(3)
