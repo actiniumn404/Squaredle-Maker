@@ -80,6 +80,38 @@ const get_results = (words, cutoff, start = Date.now()) => {
             $("#results :is(h4, ul):last-of-type").remove()
         }
     }
+    $("#results ul li").click(async (e) => {
+        let word = e.currentTarget.innerHTML
+        $("#wordDef").show()
+        $(".word__form").remove()
+        let wordData = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${word}`)
+        wordData = await wordData.json()
+        $("#word__def").html(word)
+
+        if (wordData.title === "No Definitions Found"){
+            return $("#wordDef").append(`<div class="word__form">Sorry, no definitions were found</div>`)
+        }
+        console.log(wordData)
+        for (let meaning of wordData[0].meanings) {
+            $("#wordDef").append(`<div class="word__form">
+                <p class="word__desc">
+                    <strong>${word}</strong>
+                    <i class="fas fa-volume-up hear-word" data-source="${wordData[0].phonetics[wordData[0].phonetics.length - 1].audio}"></i>
+                    <i>${meaning.partOfSpeech}</i>
+                    <ol></ol>
+                </p>`)
+            for (let def of meaning.definitions){
+                $("#wordDef ol:last-of-type").append(`<li>${def.definition}</li>`)
+            }
+
+        }
+        $(".hear-word").click((e) => {
+            let source = $(e.currentTarget).data('source')
+            if (source){
+                new Audio(source).play();
+            }
+        })
+    })
 
     $("#time_numwords").html(`${num_words} result${num_words !== 1 ? "s": ""} in ${((Date.now() - start) / 1000).toFixed(2)} seconds<br>
     ${num_awkward} awkward word${num_awkward !== 1 ? "s": ""}`)
@@ -145,7 +177,7 @@ if (!urlParams.get("quickReload")){
             return true
         };
     }
-}else if (urlParams.get("dev")){
+}if (urlParams.get("dev")){
     generate_puzzle(3)
     load_puzzle("anyantsss")
     get_results({"4":[["anan",2.15,[[0,0],[0,1],[1,0],[1,1]]],["anan",2.15,[[1,0],[0,1],[0,0],[1,1]]],["anas",2.7,[[0,0],[0,1],[1,0],[2,1]]],["anna",4.37,[[0,0],[0,1],[1,1],[1,0]]],["anna",4.37,[[1,0],[0,1],[1,1],[0,0]]],["ansa",2.16,[[0,0],[1,1],[2,0],[1,0]]],["ants",3.72,[[0,0],[0,1],[1,2],[2,1]]],["ants",3.72,[[1,0],[0,1],[1,2],[2,1]]],["assn",3.03,[[1,0],[2,1],[2,0],[1,1]]],["asst",2.78,[[1,0],[2,1],[2,2],[1,2]]],["nana",3.54,[[0,1],[1,0],[1,1],[0,0]]],["nana",3.54,[[1,1],[1,0],[0,1],[0,0]]],["nant",2.13,[[0,1],[1,0],[1,1],[1,2]]],["nant",2.13,[[1,1],[1,0],[0,1],[1,2]]],["nast",2.75,[[0,1],[1,0],[2,1],[1,2]]],["nast",2.75,[[1,1],[1,0],[2,1],[1,2]]],["saan",1.87,[[2,0],[1,0],[0,0],[0,1]]],["saan",1.87,[[2,1],[1,0],[0,0],[0,1]]],["sans",3.58,[[2,0],[1,0],[1,1],[2,2]]],["sans",3.58,[[2,1],[1,0],[1,1],[2,0]]],["sant",2.93,[[2,0],[1,0],[0,1],[1,2]]],["sant",2.93,[[2,1],[1,0],[0,1],[1,2]]],["sass",2.98,[[2,0],[1,0],[2,1],[2,2]]]],"5":[["annas",2.19,[[0,0],[0,1],[1,1],[1,0],[2,1]]],["nanas",1.84,[[0,1],[0,0],[1,1],[1,0],[2,1]]],["nanas",1.84,[[1,1],[0,0],[0,1],[1,0],[2,1]]],["nants",1.14,[[0,1],[1,0],[1,1],[1,2],[2,1]]],["nants",1.14,[[1,1],[1,0],[0,1],[1,2],[2,1]]],["nasty",4.22,[[0,1],[1,0],[2,1],[1,2],[0,2]]],["nasty",4.22,[[1,1],[1,0],[2,1],[1,2],[0,2]]],["santy",1.59,[[2,0],[1,0],[0,1],[1,2],[0,2]]],["santy",1.59,[[2,1],[1,0],[0,1],[1,2],[0,2]]],["snast",0.0,[[2,0],[1,1],[1,0],[2,1],[1,2]]],["snast",0.0,[[2,2],[1,1],[1,0],[2,1],[1,2]]]],"6":[["snasty",0.0,[[2,0],[1,1],[1,0],[2,1],[1,2],[0,2]]],["snasty",0.0,[[2,2],[1,1],[1,0],[2,1],[1,2],[0,2]]]]}, $("#freq_cutoff").val(), Date.now())
@@ -155,36 +187,4 @@ $("#word__close").click(() => {
     $("#wordDef").hide()
 })
 
-$("#results ul li").click(async (e) => {
-    let word = e.currentTarget.innerHTML
-    $("#wordDef").show()
-    $(".word__form").remove()
-    let wordData = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${word}`)
-    wordData = await wordData.json()
-    $("#word__def").html(word)
-
-    if (wordData.title === "No Definitions Found"){
-        return $("#wordDef").append(`<div class="word__form">Sorry, no definitions were found</div>`)
-    }
-    console.log(wordData)
-    for (let meaning of wordData[0].meanings) {
-        $("#wordDef").append(`<div class="word__form">
-            <p class="word__desc">
-                <strong>${word}</strong>
-                <i class="fas fa-volume-up hear-word" data-source="${wordData[0].phonetics[wordData[0].phonetics.length - 1].audio}"></i>
-                <i>${meaning.partOfSpeech}</i>
-                <ol></ol>
-            </p>`)
-        for (let def of meaning.definitions){
-            $("#wordDef ol:last-of-type").append(`<li>${def.definition}</li>`)
-        }
-
-    }
-    $(".hear-word").click((e) => {
-        let source = $(e.currentTarget).data('source')
-        if (source){
-            new Audio(source).play();
-        }
-    })
-})
 

@@ -193,6 +193,19 @@ label[for="name_input"]{
     cursor: pointer;
 }
 
+.smallbtn{
+    color: var(--theme);
+    background: none;
+    font-size: 24px;
+    border: none;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.smallbtn:hover{
+    opacity: 0.8;
+}
+
 
 @media (max-width: 1000px){
     :root{
