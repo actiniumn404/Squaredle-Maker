@@ -5,17 +5,20 @@ import requests
 from flask import Flask, send_file, request, jsonify
 from wordfreq import zipf_frequency
 
-words_list = requests.get("https://raw.githubusercontent.com/dwyl/english-words/master/words_alpha.txt").text.split("\r\n")
+words_list = requests.get("https://raw.githubusercontent.com/dwyl/english-words/master/words_alpha.txt").text.split(
+    "\r\n")
 app = Flask("Squaredle Solver")
 logging.getLogger("werkzeug").setLevel(40)
 
 
-
-def dfs(visited: list, row: int, col: int, target: str, grid: list, curWord: str, res: list):
+def dfs(visited: list, row: int, col: int, target: str, grid: list, curWord: str, path: list):
     if len(curWord) > len(target) or not target.startswith(curWord):
         return False
+
+    path.append([col, row])
+
     if curWord == target:
-        return True
+        return path
 
     visited[col][row] = True
 
@@ -23,9 +26,11 @@ def dfs(visited: list, row: int, col: int, target: str, grid: list, curWord: str
         new_row = row + plus_row
         new_col = col + plus_col
         if 0 <= new_row < len(grid) and 0 <= new_col < len(grid) and not visited[new_col][new_row]:
-            stop = dfs(visited, new_row, new_col, target, grid, curWord + grid[new_col][new_row], res)
+            stop = dfs(visited, new_row, new_col, target, grid, curWord + grid[new_col][new_row], path)
             if stop:
-                return True
+                return path
+
+    path.pop(-1)
 
     visited[col][row] = False
 
@@ -91,9 +96,9 @@ def solve():
                 word,
                 grid,
                 grid[c][r],
-                res)
+                [])
 
-            if result and result not in res.get(len(word), []):
-                res[len(word)] = res.get(len(word), []) + [[word, zipf_frequency(word, lang="en")]]
+            if result and word not in res.get(len(word), []):
+                res[len(word)] = res.get(len(word), []) + [[word, zipf_frequency(word, lang="en"), result]]
 
     return jsonify(res)
