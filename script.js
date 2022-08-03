@@ -221,6 +221,7 @@ for ([index, puzzle] of JSON.parse(localStorage.puzzles).entries()){
 
         $("#puzzle_size").val(puzzle.size)
         $("#name_input").val(puzzle.name)
+        generate_puzzle(puzzle.size)
         load_puzzle(puzzle.puzzle)
     }
     $("#curPuzzle").append(`<option value="${index}" ${selected ? "selected": ""}>${puzzle.name}</option>`)
