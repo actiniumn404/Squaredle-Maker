@@ -203,7 +203,7 @@ if (!localStorage.puzzles){
     let puzzles = JSON.parse(localStorage.puzzles)
     puzzles.push({
         name: "Untitled Squaredle",
-        puzzle: "",
+        puzzle: "                ",
         size: 4,
         revBonus: [],
         revReq: [],
