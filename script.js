@@ -1,7 +1,6 @@
 const urlParams = new URLSearchParams(window.location.search)
 let data = {}
 let num_words = 0
-let p_size = 3
 
 const generate_puzzle = (size) => {
     $("#puzzle_size").val(size)
@@ -28,6 +27,9 @@ const get_puzzle = () => {
 
     return res
 }
+const array_intersection = (array1, array2) => {
+    return array1.filter(value => array2.includes(value))
+}
 
 const data_setify = (data) => {
     let res = []
@@ -42,10 +44,9 @@ const data_setify = (data) => {
 }
 
 const load_puzzle = (puzzle) => {
-    generate_puzzle(Math.sqrt(puzzle.length))
     let squares = $(".square");
     for (let i = 0; i < squares.length; i++){
-        squares[i].children[0].value = puzzle[i]
+        squares[i].children[0].value = puzzle[i].trim() ? puzzle[i] : ""
     }
 }
 
@@ -58,13 +59,17 @@ const get_results = (words, cutoff, start = Date.now()) => {
     for (size in words){
         let width = 70
         let mywords = 0
-        let word_list = data_setify(words[size])
+        let word_list = words[size]
+        if (pdata.revBonus[size]){
+            word_list.push(...pdata.revBonus[size])
+        }
+        word_list = data_setify(word_list)
         word_list.sort()
 
 
         $("#results").append(`<h4>${size} letters</h4><ul></ul>`)
         for ([word, freq] of word_list){
-            if (freq < cutoff && size !== "Bonus"){
+            if ((pdata.revReq[size] ?? []).includes(word) || (freq < cutoff && size !== "Bonus")){
                 words["Bonus"].push([word, freq])
                 continue
             }
@@ -95,7 +100,6 @@ const get_results = (words, cutoff, start = Date.now()) => {
         if (wordData.title === "No Definitions Found"){
             return $("#wordDef").append(`<div class="word__form">Sorry, no definitions were found</div>`)
         }
-        console.log(wordData)
         for (let meaning of wordData[0].meanings) {
             $("#wordDef").append(`<div class="word__form">
                 <p class="word__desc">
@@ -176,18 +180,6 @@ ${$("#results").prop("outerHTML")}
 
 generate_puzzle(4)
 
-if (!urlParams.get("quickReload")){
-    window.onbeforeunload = function() {
-        return function () {
-            return true
-        };
-    }
-}if (urlParams.get("dev")){
-    generate_puzzle(3)
-    load_puzzle("anyantsss")
-    get_results({"4":[["anan",2.15,[[0,0],[0,1],[1,0],[1,1]]],["anan",2.15,[[1,0],[0,1],[0,0],[1,1]]],["anas",2.7,[[0,0],[0,1],[1,0],[2,1]]],["anna",4.37,[[0,0],[0,1],[1,1],[1,0]]],["anna",4.37,[[1,0],[0,1],[1,1],[0,0]]],["ansa",2.16,[[0,0],[1,1],[2,0],[1,0]]],["ants",3.72,[[0,0],[0,1],[1,2],[2,1]]],["ants",3.72,[[1,0],[0,1],[1,2],[2,1]]],["assn",3.03,[[1,0],[2,1],[2,0],[1,1]]],["asst",2.78,[[1,0],[2,1],[2,2],[1,2]]],["nana",3.54,[[0,1],[1,0],[1,1],[0,0]]],["nana",3.54,[[1,1],[1,0],[0,1],[0,0]]],["nant",2.13,[[0,1],[1,0],[1,1],[1,2]]],["nant",2.13,[[1,1],[1,0],[0,1],[1,2]]],["nast",2.75,[[0,1],[1,0],[2,1],[1,2]]],["nast",2.75,[[1,1],[1,0],[2,1],[1,2]]],["saan",1.87,[[2,0],[1,0],[0,0],[0,1]]],["saan",1.87,[[2,1],[1,0],[0,0],[0,1]]],["sans",3.58,[[2,0],[1,0],[1,1],[2,2]]],["sans",3.58,[[2,1],[1,0],[1,1],[2,0]]],["sant",2.93,[[2,0],[1,0],[0,1],[1,2]]],["sant",2.93,[[2,1],[1,0],[0,1],[1,2]]],["sass",2.98,[[2,0],[1,0],[2,1],[2,2]]]],"5":[["annas",2.19,[[0,0],[0,1],[1,1],[1,0],[2,1]]],["nanas",1.84,[[0,1],[0,0],[1,1],[1,0],[2,1]]],["nanas",1.84,[[1,1],[0,0],[0,1],[1,0],[2,1]]],["nants",1.14,[[0,1],[1,0],[1,1],[1,2],[2,1]]],["nants",1.14,[[1,1],[1,0],[0,1],[1,2],[2,1]]],["nasty",4.22,[[0,1],[1,0],[2,1],[1,2],[0,2]]],["nasty",4.22,[[1,1],[1,0],[2,1],[1,2],[0,2]]],["santy",1.59,[[2,0],[1,0],[0,1],[1,2],[0,2]]],["santy",1.59,[[2,1],[1,0],[0,1],[1,2],[0,2]]],["snast",0.0,[[2,0],[1,1],[1,0],[2,1],[1,2]]],["snast",0.0,[[2,2],[1,1],[1,0],[2,1],[1,2]]]],"6":[["snasty",0.0,[[2,0],[1,1],[1,0],[2,1],[1,2],[0,2]]],["snasty",0.0,[[2,2],[1,1],[1,0],[2,1],[1,2],[0,2]]]]}, $("#freq_cutoff").val(), Date.now())
-}
-
 $("#word__close").click(() => {
     $("#wordDef").hide()
 })
@@ -196,7 +188,11 @@ $("#name_input").keyup(() => {
     pdata.name = $("#name_input").val()
 })
 
-
+if (urlParams.get("puzzle")){
+    if (0 <= Number(urlParams.get("puzzle")) && Number(urlParams.get("puzzle")) < JSON.parse(localStorage.puzzles).length){
+        localStorage.current = Number(urlParams.get("puzzle"))
+    }
+}
 if (!localStorage.puzzles){
     localStorage.puzzles = "[]"
 }if (JSON.parse(localStorage.puzzles).length === 0){
@@ -205,8 +201,8 @@ if (!localStorage.puzzles){
         name: "Untitled Squaredle",
         puzzle: "                ",
         size: 4,
-        revBonus: [],
-        revReq: [],
+        revBonus: {}, // Bonus words that have been changed to Required
+        revReq: {}, // Required words that have been changed to Bonus
     })
     localStorage.puzzles = JSON.stringify(puzzles)
 }if (!localStorage.current){
@@ -214,21 +210,75 @@ if (!localStorage.puzzles){
 }
 
 $("#curPuzzle").html("")
-for ([index, puzzle] of JSON.parse(localStorage.puzzles).entries()){
+let pdata;
+let original_data;
+let p_size;
+for ([index, puzzle] of JSON.parse(localStorage.puzzles).entries()) {
     let selected = index === Number(localStorage.current)
-    if (selected){
-        pdata = puzzle
-
-        $("#puzzle_size").val(puzzle.size)
+    if (selected) {
+        original_data = puzzle
+        pdata = {...original_data}
+        p_size = Number(puzzle.size)
+        $("#puzzle_size").val(p_size)
         $("#name_input").val(puzzle.name)
-        generate_puzzle(puzzle.size)
+        generate_puzzle(p_size)
         load_puzzle(puzzle.puzzle)
     }
-    $("#curPuzzle").append(`<option value="${index}" ${selected ? "selected": ""}>${puzzle.name}</option>`)
+    $("#curPuzzle").append(`<option value="${index}" ${selected ? "selected" : ""}>${puzzle.name}</option>`)
 }
 
-$('#savePuzzle').click(() => {
-    puzzles = JSON.parse(localStorage.puzzles)
+const save = () => {
+    let puzzles = JSON.parse(localStorage.puzzles)
     puzzles[Number(localStorage.current)] = pdata
     localStorage.puzzles = JSON.stringify(puzzles)
+    original_data = {...pdata}
+    $(`#curPuzzle option:nth-of-type(${Number(localStorage.current) + 1})`).html(pdata.name)
+}
+
+
+$('#savePuzzle').click(() => save())
+
+window.onbeforeunload = () => {
+    if (JSON.stringify(original_data) !== JSON.stringify(pdata)){
+        return () => {}
+    }
+}
+
+$("#newPuzzle").click(() => {
+    let existing_names = JSON.parse(localStorage.puzzles).map(e => e.name)
+    let name;
+    if (!existing_names.includes("Untitled Squaredle")){
+        name = "Untitled Squaredle";
+    }else{
+        name = "Untitled Squaredle (1)"
+        let i = 1;
+        while (existing_names.includes(name)){
+            name = `Untitled Squaredle (${i})`
+            i += 1;
+        }
+    }
+    let puzzles = JSON.parse(localStorage.puzzles)
+    puzzles.push({
+        name: name,
+        puzzle: "                ",
+        size: 4,
+        revBonus: {},
+        revReq: {},
+    })
+    localStorage.puzzles = JSON.stringify(puzzles)
+
+    urlParams.set("puzzle", puzzles.length - 1)
+    location.search = "?" + urlParams.toString()
 })
+
+$("#curPuzzle").change(() => {
+    urlParams.set("puzzle", $("#curPuzzle").val())
+    location.search = "?" + urlParams.toString()
+})
+
+document.onkeydown = (e) => {
+    if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+        e.preventDefault();
+        save()
+    }
+}
