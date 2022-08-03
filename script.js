@@ -16,7 +16,7 @@ const generate_puzzle = (size) => {
     $(".square").css("--size", size)
 
     $(".square input").keyup(() => {
-        data.puzzle = get_puzzle()
+        pdata.puzzle = get_puzzle()
     })
 }
 
@@ -127,7 +127,7 @@ $("#puzzle_size").on("change keyup input", () => {
         p_size = size
         generate_puzzle(p_size)
     }
-    data.size = $("#puzzle_size").val()
+    pdata.size = $("#puzzle_size").val()
 })
 
 $("#process").click(async () => {
@@ -193,7 +193,7 @@ $("#word__close").click(() => {
 })
 
 $("#name_input").keyup(() => {
-    data.name = $("#name_input").val()
+    pdata.name = $("#name_input").val()
 })
 
 
@@ -217,7 +217,7 @@ $("#curPuzzle").html("")
 for ([index, puzzle] of JSON.parse(localStorage.puzzles).entries()){
     let selected = index === Number(localStorage.current)
     if (selected){
-        data = puzzle
+        pdata = puzzle
 
         $("#puzzle_size").val(puzzle.size)
         $("#name_input").val(puzzle.name)
@@ -228,6 +228,6 @@ for ([index, puzzle] of JSON.parse(localStorage.puzzles).entries()){
 
 $('#savePuzzle').click(() => {
     puzzles = JSON.parse(localStorage.puzzles)
-    puzzles[Number(localStorage.current)] = data
+    puzzles[Number(localStorage.current)] = pdata
     localStorage.puzzles = JSON.stringify(puzzles)
 })
