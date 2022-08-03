@@ -14,12 +14,16 @@ const generate_puzzle = (size) => {
         }
     }
     $(".square").css("--size", size)
+
+    $(".square input").keyup(() => {
+        data.puzzle = get_puzzle()
+    })
 }
 
 const get_puzzle = () => {
     let res = ""
     document.querySelectorAll("#puzzle td input").forEach((e) => {
-        res += e.value
+        res += e.value ? e.value : " "
     })
 
     return res
@@ -123,6 +127,7 @@ $("#puzzle_size").on("change keyup input", () => {
         p_size = size
         generate_puzzle(p_size)
     }
+    data.size = $("#puzzle_size").val()
 })
 
 $("#process").click(async () => {
@@ -187,4 +192,42 @@ $("#word__close").click(() => {
     $("#wordDef").hide()
 })
 
+$("#name_input").keyup(() => {
+    data.name = $("#name_input").val()
+})
 
+
+if (!localStorage.puzzles){
+    localStorage.puzzles = "[]"
+}if (JSON.parse(localStorage.puzzles).length === 0){
+    let puzzles = JSON.parse(localStorage.puzzles)
+    puzzles.push({
+        name: "Untitled Squaredle",
+        puzzle: "",
+        size: 4,
+        revBonus: [],
+        revReq: [],
+    })
+    localStorage.puzzles = JSON.stringify(puzzles)
+}if (!localStorage.current){
+    localStorage.current = 0
+}
+
+$("#curPuzzle").html("")
+for ([index, puzzle] of JSON.parse(localStorage.puzzles).entries()){
+    let selected = index === Number(localStorage.current)
+    if (selected){
+        data = puzzle
+
+        $("#puzzle_size").val(puzzle.size)
+        $("#name_input").val(puzzle.name)
+        load_puzzle(puzzle.puzzle)
+    }
+    $("#curPuzzle").append(`<option value="${index}" ${selected ? "selected": ""}>${puzzle.name}</option>`)
+}
+
+$('#savePuzzle').click(() => {
+    puzzles = JSON.parse(localStorage.puzzles)
+    puzzles[Number(localStorage.current)] = data
+    localStorage.puzzles = JSON.stringify(puzzles)
+})

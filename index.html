@@ -19,8 +19,11 @@
         <aside>
             <h1>Settings</h1>
             <button id="process" class="coolbtn">See Results</button>
-            <button id="exportDscd" class="coolbtn">Export to Squaredle Discord</button>
+            <button id="newPuzzle" class="coolbtn">New Puzzle</button>
+            <select id="curPuzzle" name="curPuzzle"></select>
             <div id="btn_settings">
+                <button id="savePuzzle" class="smallbtn"><i class="fas fa-save"></i></button>
+                <button id="exportDscd" class="smallbtn"><i class="fa-solid fa-copy"></i></button>
                 <button id="printResults" class="smallbtn"><i class="fa-solid fa-print"></i></button>
                 <button id="subSquareRes" class="smallbtn"><i class="fa-solid fa-border-none"></i></button>
             </div>
@@ -39,7 +42,7 @@
         <main>
             <div id="puzzle_name" class="flex-center">
                 <label for="name_input">Puzzle Name:</label>
-                <input id="name_input" value="Untitled Squaredle">
+                <input id="name_input" value="Untitled Squaredle" maxlength="40">
             </div>
             <table id="puzzle"></table>
         </main>

@@ -206,6 +206,15 @@ label[for="name_input"]{
     opacity: 0.8;
 }
 
+#curPuzzle{
+    border: 2px solid var(--theme);
+    width: 300px;
+    background: none;
+    color: white;
+    padding: 10px;
+    outline: none;
+    cursor: pointer;
+}
 
 @media (max-width: 1000px){
     :root{
