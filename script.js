@@ -6,9 +6,9 @@ const generate_puzzle = (size) => {
     $("#puzzle_size").val(size)
     let puzzle = $("#puzzle")
     puzzle.html("")
-    for (let i = 0; i < size; i++){
+    for (let i = 0; i < size; i++) {
         puzzle.append("<tr></tr>")
-        for (let i = 0; i < size; i++){
+        for (let i = 0; i < size; i++) {
             $("#puzzle tr:last-of-type").append("<td class='square'><input maxlength='1'></td>")
         }
     }
@@ -35,7 +35,7 @@ const data_setify = (data) => {
     let res = []
     let res_set = new Set();
     data.forEach((e) => {
-        if (!res_set.has(e[0])){
+        if (!res_set.has(e[0])) {
             res_set.add(e[0])
             res.push(e)
         }
@@ -45,7 +45,7 @@ const data_setify = (data) => {
 
 const load_puzzle = (puzzle) => {
     let squares = $(".square");
-    for (let i = 0; i < squares.length; i++){
+    for (let i = 0; i < squares.length; i++) {
         squares[i].children[0].value = puzzle[i].trim() ? puzzle[i] : ""
     }
 }
@@ -56,11 +56,11 @@ const get_results = (words, cutoff, start = Date.now()) => {
     let num_awkward = 0;
     words["Bonus"] = []
 
-    for (size in words){
+    for (size in words) {
         let width = 70
         let mywords = 0
         let word_list = words[size]
-        if (pdata.revBonus[size]){
+        if (pdata.revBonus[size]) {
             word_list.push(...pdata.revBonus[size])
         }
         word_list = data_setify(word_list)
@@ -68,61 +68,75 @@ const get_results = (words, cutoff, start = Date.now()) => {
 
 
         $("#results").append(`<h4>${size} letters</h4><ul></ul>`)
-        for ([word, freq] of word_list){
-            if ((pdata.revReq[size] ?? []).includes(word) || (freq < cutoff && size !== "Bonus")){
-                words["Bonus"].push([word, freq])
+        for ([word, freq, path] of word_list) {
+            if (
+                (JSON.stringify(pdata.revReq[size] ?? []).includes(JSON.stringify([word, freq, path]))
+                || (freq < cutoff && size !== "Bonus"))
+                && !(JSON.stringify(pdata.revBonus[size] ?? []).includes(JSON.stringify([word, freq, path])))
+            ) {
+                words["Bonus"].push([word, freq, path])
                 continue
             }
-            if (awkward_words.has(word)){
+            if (awkward_words.has(word)) {
                 num_awkward += 1;
             }
             mywords += 1
             num_words += 1
-            $("#results ul:last-of-type").append(`<li style="width: fit-content;width: -moz-fit-content;${awkward_words.has(word) ? "color: mediumpurple": ""}">${word}</li>`)
+            $("#results ul:last-of-type").append(`
+    <li 
+    class="${"word_" + size}" 
+    data-data='${JSON.stringify([word, freq, path])}'
+    style="width: fit-content;width: -moz-fit-content;${awkward_words.has(word) ? "color: mediumpurple" : ""}"
+    >${word}</li>`)
             width = Math.max(width, $("#results ul:last-of-type li:last-of-type").width())
         }
-        if (mywords){
+        if (mywords) {
             $("#results ul:last-of-type li").css("width", "initial")
             $("#results ul:last-of-type").css("grid-template-columns", `repeat(auto-fill, minmax(${Math.ceil(width) + 10}px, 1fr))`)
             $("#results h4:last-of-type").append(` (${mywords} words)`)
-        }else{
+        } else {
             $("#results :is(h4, ul):last-of-type").remove()
         }
     }
     $("#results ul li").click(async (e) => {
-        let word = e.currentTarget.innerHTML
+        let element = $(e.currentTarget)
+        popupData = element.data("data")
+        popupWord = element.html()
+
         $("#wordDef").show()
         $(".word__form").remove()
-        let wordData = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${word}`)
+        let wordData = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${popupWord}`)
         wordData = await wordData.json()
-        $("#word__def").html(word)
+        $("#word__def").html(popupWord)
 
-        if (wordData.title === "No Definitions Found"){
+        $("#wordDef > .smallCoolBtn").html(element.hasClass("word_Bonus") ? "Add to Required" : "Add to Bonus")
+
+        if (wordData.title === "No Definitions Found") {
             return $("#wordDef").append(`<div class="word__form">Sorry, no definitions were found</div>`)
         }
         for (let meaning of wordData[0].meanings) {
             $("#wordDef").append(`<div class="word__form">
                 <p class="word__desc">
-                    <strong>${word}</strong>
-                    <i class="fas fa-volume-up hear-word" data-source="${wordData[0].phonetics[wordData[0].phonetics.length - 1].audio}"></i>
+                    <strong>${popupWord}</strong>
+                    <i class="fas fa-volume-up hear-word" data-source="${(wordData[0].phonetics[wordData[0].phonetics.length - 1] ?? {}).audio}"></i>
                     <i>${meaning.partOfSpeech}</i>
                     <ol></ol>
                 </p>`)
-            for (let def of meaning.definitions){
+            for (let def of meaning.definitions) {
                 $("#wordDef ol:last-of-type").append(`<li>${def.definition}</li>`)
             }
 
         }
         $(".hear-word").click((e) => {
             let source = $(e.currentTarget).data('source')
-            if (source){
+            if (source) {
                 new Audio(source).play();
             }
         })
     })
 
-    $("#time_numwords").html(`${num_words} result${num_words !== 1 ? "s": ""} in ${((Date.now() - start) / 1000).toFixed(2)} seconds<br>
-    ${num_awkward} awkward word${num_awkward !== 1 ? "s": ""}`)
+    $("#time_numwords").html(`${num_words} result${num_words !== 1 ? "s" : ""} in ${((Date.now() - start) / 1000).toFixed(2)} seconds<br>
+    ${num_awkward} awkward word${num_awkward !== 1 ? "s" : ""}`)
 }
 
 $("#puzzle_size").on("change keyup input", () => {
@@ -145,7 +159,7 @@ $("#process").click(async () => {
 
     btn.prop("disabled", false)
 
-    if (res["error"]){
+    if (res["error"]) {
         return $("#results").html(`<strong style="color: var(--theme)">ERROR: ${res["error"]}</strong>`)
     }
 
@@ -156,9 +170,9 @@ $("#exportDscd").click(() => {
     let index = 0;
     let size = p_size;
     let res = ""
-    for (let letter of get_puzzle()){
+    for (let letter of get_puzzle()) {
         res += `:squaredle${letter.toUpperCase()}: `
-        if (index % size === size - 1){
+        if (index % size === size - 1) {
             res += "\n"
         }
         index += 1
@@ -188,14 +202,15 @@ $("#name_input").keyup(() => {
     pdata.name = $("#name_input").val()
 })
 
-if (urlParams.get("puzzle")){
-    if (0 <= Number(urlParams.get("puzzle")) && Number(urlParams.get("puzzle")) < JSON.parse(localStorage.puzzles).length){
+if (urlParams.get("puzzle")) {
+    if (0 <= Number(urlParams.get("puzzle")) && Number(urlParams.get("puzzle")) < JSON.parse(localStorage.puzzles).length) {
         localStorage.current = Number(urlParams.get("puzzle"))
     }
 }
-if (!localStorage.puzzles){
+if (!localStorage.puzzles) {
     localStorage.puzzles = "[]"
-}if (JSON.parse(localStorage.puzzles).length === 0){
+}
+if (JSON.parse(localStorage.puzzles).length === 0) {
     let puzzles = JSON.parse(localStorage.puzzles)
     puzzles.push({
         name: "Untitled Squaredle",
@@ -205,7 +220,8 @@ if (!localStorage.puzzles){
         revReq: {}, // Required words that have been changed to Bonus
     })
     localStorage.puzzles = JSON.stringify(puzzles)
-}if (!localStorage.current){
+}
+if (!localStorage.current) {
     localStorage.current = 0
 }
 
@@ -239,20 +255,21 @@ const save = () => {
 $('#savePuzzle').click(() => save())
 
 window.onbeforeunload = () => {
-    if (JSON.stringify(original_data) !== JSON.stringify(pdata)){
-        return () => {}
+    if (JSON.stringify(original_data) !== JSON.stringify(pdata)) {
+        return () => {
+        }
     }
 }
 
 $("#newPuzzle").click(() => {
     let existing_names = JSON.parse(localStorage.puzzles).map(e => e.name)
     let name;
-    if (!existing_names.includes("Untitled Squaredle")){
+    if (!existing_names.includes("Untitled Squaredle")) {
         name = "Untitled Squaredle";
-    }else{
+    } else {
         name = "Untitled Squaredle (1)"
         let i = 1;
-        while (existing_names.includes(name)){
+        while (existing_names.includes(name)) {
             name = `Untitled Squaredle (${i})`
             i += 1;
         }
@@ -282,3 +299,35 @@ document.onkeydown = (e) => {
         save()
     }
 }
+
+$("#freq_cutoff").on("change keyup input click", () => {
+    if (JSON.stringify(data) !== "{}" && $("#freq_cutoff").val()) {
+        get_results(data, $("#freq_cutoff").val(), Date.now())
+    }
+})
+
+$("#wordDef > .smallCoolBtn").click(() => {
+    if (!pdata.revReq[popupWord.length]) {
+        pdata.revReq[popupWord.length] = []
+    }
+    if (!pdata.revBonus[popupWord.length]) {
+        pdata.revBonus[popupWord.length] = []
+    }
+    if ($("#wordDef > .smallCoolBtn").html() === "Add to Bonus") {
+        let index = pdata.revBonus[popupWord.length].indexOf(popupData)
+        if (index !== -1) {
+            pdata.revBonus.splice(index, 1)
+        }else{
+            pdata.revReq[popupWord.length].push(popupData)
+        }
+    } else {
+        let index = pdata.revReq[popupWord.length].indexOf(popupData)
+        if (index !== -1) {
+            pdata.revReq.splice(index, 1)
+        }else{
+            pdata.revBonus[popupWord.length].push(popupData)
+        }
+    }
+    $("#wordDef").hide()
+    get_results(data, $("#freq_cutoff").val(), Date.now())
+})
