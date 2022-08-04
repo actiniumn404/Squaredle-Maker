@@ -146,7 +146,7 @@ label[for="name_input"]{
     outline: none;
 }
 
-#wordDef {
+.modal {
     background: #202020;
     border: 1px solid #b0b0b0;
     position: fixed;
@@ -162,11 +162,11 @@ label[for="name_input"]{
     overflow: auto;
 }
 
-#wordDef h2{
+.modal .header{
     margin: 0 0 20px 0;
 }
 
-#word__close{
+.modal .close{
     float: right;
     font-size: 24px;
     font-weight: 400;
@@ -228,6 +228,36 @@ label[for="name_input"]{
     cursor: pointer;
     border-radius: 8px;
     transition: 0.2s;
+}
+
+#deleteInput{
+    margin: 0 0 10px 0;
+    width: 100%;
+    height: 40px;
+    border-radius: 8px;
+    padding: 10px;
+    outline: none;
+}
+
+#deleteDelete{
+    background: #c90303;
+    width: 100%;
+    height: 40px;
+    border-radius: 8px;
+    border: none;
+    color: white;
+    font-weight: bolder;
+    font-size: 16px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+#deleteDelete:hover{
+    opacity: 0.8;
+}
+
+#deleteDelete:active, #deleteDelete:disabled{
+    opacity: 0.5
 }
 
 @media (max-width: 1000px){

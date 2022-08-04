@@ -306,6 +306,31 @@ $("#freq_cutoff").on("change keyup input click", () => {
     }
 })
 
+$("#deletePuzzle").click(() => {
+    $("#deletePopup .deletename").html(pdata.name)
+    $("#deleteDelete").prop("disabled", true)
+    $("#deleteInput").attr("placeholder", pdata.name)
+    $("#deletePopup").show()
+})
+
+$("#deletePopup .close").click(() => {
+    $("#deletePopup").hide()
+})
+
+$("#deleteInput").keyup(() => {
+    $("#deleteDelete").prop("disabled", !(pdata.name === $("#deleteInput").val()))
+})
+
+$("#deleteDelete").click(() => {
+    let puzzles = JSON.parse(localStorage.puzzles)
+    puzzles.splice(localStorage.current, 1)
+    localStorage.puzzles = JSON.stringify(puzzles)
+    urlParams.delete("puzzle")
+    localStorage.current = 0
+
+    location.search = "?" + urlParams.toString()
+})
+
 $("#wordDef > .smallCoolBtn").click(() => {
     if (!pdata.revReq[popupWord.length]) {
         pdata.revReq[popupWord.length] = []
