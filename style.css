@@ -101,6 +101,7 @@ aside > div > input{
     font-weight: bolder;
     outline: none;
     text-transform: capitalize;
+    z-index: 2;
 }
 
 aside :is(h1, h2, h4){
@@ -160,6 +161,7 @@ label[for="name_input"]{
     display: none;
     max-height: 80%;
     overflow: auto;
+    z-index: 3;
 }
 
 .modal .header{
@@ -258,6 +260,16 @@ label[for="name_input"]{
 
 #deleteDelete:active, #deleteDelete:disabled{
     opacity: 0.5
+}
+
+.squareCircle{
+    --s: calc((var(--width) / 2 - 10px) / var(--size) - 20px);
+    display: none;
+    position: absolute;
+    width: var(--s);
+    height: var(--s);
+    border-radius: 100%;
+    opacity: 0.8;
 }
 
 @media (max-width: 1000px){

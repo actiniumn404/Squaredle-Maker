@@ -8,8 +8,9 @@ const generate_puzzle = (size) => {
     puzzle.html("")
     for (let i = 0; i < size; i++) {
         puzzle.append("<tr></tr>")
-        for (let i = 0; i < size; i++) {
-            $("#puzzle tr:last-of-type").append("<td class='square'><input maxlength='1'></td>")
+        for (let j = 0; j < size; j++) {
+            $("#puzzle tr:last-of-type").append(`<td id="theSquare${i}-${j}" class='square'><div class='squareCircle'></div><input maxlength='1'></td>`
+        )
         }
     }
     $(".square").css("--size", size)
@@ -46,7 +47,7 @@ const data_setify = (data) => {
 const load_puzzle = (puzzle) => {
     let squares = $(".square");
     for (let i = 0; i < squares.length; i++) {
-        squares[i].children[0].value = puzzle[i].trim() ? puzzle[i] : ""
+        squares[i].children[1].value = puzzle[i].trim() ? puzzle[i] : ""
     }
 }
 
@@ -71,7 +72,7 @@ const get_results = (words, cutoff, start = Date.now()) => {
         for ([word, freq, path] of word_list) {
             if (
                 (JSON.stringify(pdata.revReq[size] ?? []).includes(JSON.stringify([word, freq, path]))
-                || (freq < cutoff && size !== "Bonus"))
+                    || (freq < cutoff && size !== "Bonus"))
                 && !(JSON.stringify(pdata.revBonus[size] ?? []).includes(JSON.stringify([word, freq, path])))
             ) {
                 words["Bonus"].push([word, freq, path])
@@ -109,7 +110,7 @@ const get_results = (words, cutoff, start = Date.now()) => {
         wordData = await wordData.json()
         $("#word__def").html(popupWord)
 
-        $("#wordDef > .smallCoolBtn").html(element.hasClass("word_Bonus") ? "Add to Required" : "Add to Bonus")
+        $("#wordDef > #manualCateg").html(element.hasClass("word_Bonus") ? "Add to Required" : "Add to Bonus")
 
         if (wordData.title === "No Definitions Found") {
             return $("#wordDef").append(`<div class="word__form">Sorry, no definitions were found</div>`)
@@ -331,28 +332,44 @@ $("#deleteDelete").click(() => {
     location.search = "?" + urlParams.toString()
 })
 
-$("#wordDef > .smallCoolBtn").click(() => {
+$("#wordDef > #manualCateg").click(() => {
     if (!pdata.revReq[popupWord.length]) {
         pdata.revReq[popupWord.length] = []
     }
     if (!pdata.revBonus[popupWord.length]) {
         pdata.revBonus[popupWord.length] = []
     }
-    if ($("#wordDef > .smallCoolBtn").html() === "Add to Bonus") {
+    if ($("#wordDef > #manualCateg").html() === "Add to Bonus") {
         let index = pdata.revBonus[popupWord.length].indexOf(popupData)
         if (index !== -1) {
             pdata.revBonus.splice(index, 1)
-        }else{
+        } else {
             pdata.revReq[popupWord.length].push(popupData)
         }
     } else {
         let index = pdata.revReq[popupWord.length].indexOf(popupData)
         if (index !== -1) {
             pdata.revReq.splice(index, 1)
-        }else{
+        } else {
             pdata.revBonus[popupWord.length].push(popupData)
         }
     }
     $("#wordDef").hide()
     get_results(data, $("#freq_cutoff").val(), Date.now())
+})
+
+$("#wordPath").click(() => {
+    $("#wordDef").hide()
+    let path = popupData[2];
+    let i = 0;
+    $(`.squareCircle`).css("background", `none`)
+    path.forEach((e) => {
+        let [col, row] = e;
+        $(`#theSquare${col}-${row} .squareCircle`)
+            .css("background", `hsl(${280 / path.length * i}, 100%, 50%)`)
+            .css("width", `calc(var(--s) * (1 - ${0.5 / path.length * i}))`)
+            .css("height", `calc(var(--s) * (1 - ${0.5 / path.length * i}))`)
+        i++;
+    })
+    $(".squareCircle").show()
 })
