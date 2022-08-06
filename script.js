@@ -1,6 +1,9 @@
 const urlParams = new URLSearchParams(window.location.search)
 let data = {}
 let num_words = 0
+let analysis = {
+    squareFreq: {}
+}
 
 const generate_puzzle = (size) => {
     $("#puzzle_size").val(size)
@@ -90,6 +93,11 @@ const get_results = (words, cutoff, start = Date.now()) => {
     style="width: fit-content;width: -moz-fit-content;${awkward_words.has(word) ? "color: mediumpurple" : ""}"
     >${word}</li>`)
             width = Math.max(width, $("#results ul:last-of-type li:last-of-type").width())
+
+            for (let [col, row] of path){
+                let square = `${col}-${row}`
+                analysis.squareFreq[square] = (analysis.squareFreq[square] ?? 0) + 1
+            }
         }
         if (mywords) {
             $("#results ul:last-of-type li").css("width", "initial")
@@ -372,4 +380,37 @@ $("#wordPath").click(() => {
         i++;
     })
     $(".squareCircle").show()
+})
+
+$("#squareFreq").click((e) => {
+    $(".smallbtn:not(#squareFreq)").removeClass("selected")
+    if ($("#squareFreq").hasClass("selected")){
+        $("#squareFreq").removeClass("selected")
+        $("#sfreqPopup").hide()
+    }else{
+        $("#squareFreq").addClass("selected")
+        $("#sfreqPopup").show().css({
+            left: e.pageX,
+            top: e.pageY
+        })
+    }
+})
+
+$(document).mousemove(function(e) {
+    if ($("#squareFreq").hasClass("selected")){
+        $("#sfreqPopup").css({
+            left: e.pageX,
+            top: e.pageY
+        }).show()
+    }
+})
+
+$(".square").mouseover((e) => {
+    let element = $(e.currentTarget)
+    let coord = element.prop("id").substr(-3)
+    if ($("#squareFreq").hasClass("selected")){
+        $("#sfreqPopup").html(`Coordinate: ${coord} <br>
+        Letter: ${element.children()[1].value.toUpperCase()} <br>
+        Number of words that use this square: ${analysis.squareFreq[coord] ?? 0}`)
+    }
 })

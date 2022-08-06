@@ -272,6 +272,27 @@ label[for="name_input"]{
     opacity: 0.8;
 }
 
+.selected{
+    background: var(--theme);
+    color: white;
+    border-radius: 8px;
+}
+
+.tooltip {
+    display: none;
+    color: black;
+    background: white;
+    padding: 10px;
+    width: 200px;
+    height: fit-content;
+    height: -moz-fit-content;
+    border-radius: 8px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 3;
+}
+
 @media (max-width: 1000px){
     :root{
         --width: 100vw;
