@@ -270,6 +270,18 @@ label[for="name_input"]{
     height: var(--s);
     border-radius: 100%;
     opacity: 0.8;
+    animation: 200ms ease popin;
+}
+
+@keyframes popin{
+    0% {
+        width: calc(0.8 * var(--s));
+        height: calc(0.8 * var(--s));
+    }
+    1000% {
+        width: calc(1 * var(--s));
+        height: calc(0.8 * var(--s));
+    }
 }
 
 .selected{

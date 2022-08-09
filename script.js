@@ -16,7 +16,17 @@ const generate_puzzle = (size) => {
         )
         }
     }
-    $(".square").css("--size", size)
+    $(".square")
+        .css("--size", size)
+        .mouseover((e) => {
+            let element = $(e.currentTarget)
+            let coord = element.prop("id").substring(9)
+            if ($("#squareFreq").hasClass("selected")){
+                $("#sfreqPopup").html(`Coordinate: ${coord} <br>
+                Letter: ${element.children()[1].value.toUpperCase()} <br>
+                Number of words that use this square: ${analysis.squareFreq[coord] ?? 0}`)
+            }
+        })
 
     $(".square input").keyup(() => {
         pdata.puzzle = get_puzzle()
@@ -71,7 +81,7 @@ const get_results = (words, cutoff, start = Date.now()) => {
         word_list.sort()
 
 
-        $("#results").append(`<h4>${size} letters</h4><ul></ul>`)
+        $("#results").append(`<h4>${size} ${isNaN(size) ? "words" : "letters"}</h4><ul></ul>`)
         for ([word, freq, path] of word_list) {
             if (
                 (JSON.stringify(pdata.revReq[size] ?? []).includes(JSON.stringify([word, freq, path]))
@@ -366,20 +376,24 @@ $("#wordDef > #manualCateg").click(() => {
     get_results(data, $("#freq_cutoff").val(), Date.now())
 })
 
-$("#wordPath").click(() => {
+function timeout(ms) { // Awesome function
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+$("#wordPath").click(async () => {
     $("#wordDef").hide()
     let path = popupData[2];
     let i = 0;
-    $(`.squareCircle`).css("background", `none`)
-    path.forEach((e) => {
-        let [col, row] = e;
+    $(`.squareCircle`).css("background", `none`).hide()
+    for ([col, row] of path){
         $(`#theSquare${col}-${row} .squareCircle`)
             .css("background", `hsl(${280 / path.length * i}, 100%, 50%)`)
             .css("width", `calc(var(--s) * (1 - ${0.5 / path.length * i}))`)
             .css("height", `calc(var(--s) * (1 - ${0.5 / path.length * i}))`)
+            .show()
         i++;
-    })
-    $(".squareCircle").show()
+        await timeout(400);
+    }
 })
 
 $("#squareFreq").click((e) => {
@@ -402,15 +416,5 @@ $(document).mousemove(function(e) {
             left: e.pageX,
             top: e.pageY
         }).show()
-    }
-})
-
-$(".square").mouseover((e) => {
-    let element = $(e.currentTarget)
-    let coord = element.prop("id").substr(-3)
-    if ($("#squareFreq").hasClass("selected")){
-        $("#sfreqPopup").html(`Coordinate: ${coord} <br>
-        Letter: ${element.children()[1].value.toUpperCase()} <br>
-        Number of words that use this square: ${analysis.squareFreq[coord] ?? 0}`)
     }
 })
