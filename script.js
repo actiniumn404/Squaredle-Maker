@@ -65,6 +65,9 @@ const load_puzzle = (puzzle) => {
 }
 
 const get_results = (words, cutoff, start = Date.now()) => {
+    analysis = {
+        squareFreq: {}
+    }
     $("#results").html("")
     num_words = 0
     let num_awkward = 0;
@@ -197,7 +200,7 @@ $("#exportDscd").click(() => {
         index += 1
     }
 
-    navigation.clipboard.writeText(res)
+    navigator.clipboard.writeText(res)
     alert("Copied data to clipboard!")
 })
 
