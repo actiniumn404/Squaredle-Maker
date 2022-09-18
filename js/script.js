@@ -94,7 +94,7 @@ const get_results = (words, cutoff, start = Date.now()) => {
                 words["Bonus"].push([word, freq, path])
                 continue
             }
-            if (awkward_words.has(word)) {
+            if (awkward_words.has(btoa(word))) {
                 num_awkward += 1;
             }
             mywords += 1
@@ -103,7 +103,7 @@ const get_results = (words, cutoff, start = Date.now()) => {
     <li 
     class="${"word_" + size}" 
     data-data='${JSON.stringify([word, freq, path])}'
-    style="width: fit-content;width: -moz-fit-content;${awkward_words.has(word) ? "color: mediumpurple" : ""}"
+    style="width: fit-content;width: -moz-fit-content;${awkward_words.has(btoa(word)) ? "color: mediumpurple" : ""}"
     >${word}</li>`)
             width = Math.max(width, $("#results ul:last-of-type li:last-of-type").width())
 
@@ -175,9 +175,7 @@ $("#process").click(async () => {
     let start = Date.now()
     btn.prop("disabled", true)
 
-    let res = await fetch(`/api/solve?size=${p_size}&grid=${get_puzzle()}`)
-    res = await res.json()
-    data = res
+    data = res = solve(p_size, get_puzzle())
 
     btn.prop("disabled", false)
 
@@ -189,6 +187,7 @@ $("#process").click(async () => {
 })
 
 $("#exportDscd").click(() => {
+    // Get Emojis
     let index = 0;
     let size = p_size;
     let res = ""
@@ -199,9 +198,14 @@ $("#exportDscd").click(() => {
         }
         index += 1
     }
+    $("#shareEmojis").val(res)
+    $("#download").show()
 
-    navigator.clipboard.writeText(res)
-    alert("Copied data to clipboard!")
+    $("#download__copyEmoji").click(() => {
+        navigator.clipboard.writeText(res)
+        alert("Copied to clipboard")
+    })
+
 })
 
 $("#printResults").click(() => {
@@ -339,6 +343,10 @@ $("#deletePopup .close").click(() => {
     $("#deletePopup").hide()
 })
 
+$("#download .close").click(() => {
+    $("#download").hide()
+})
+
 $("#deleteInput").keyup(() => {
     $("#deleteDelete").prop("disabled", !(pdata.name === $("#deleteInput").val()))
 })
@@ -421,3 +429,17 @@ $(document).mousemove(function(e) {
         }).show()
     }
 })
+
+const alert = (text) => {
+    let el = document.createElement("DIV")
+    el.classList.add("alert")
+    el.innerHTML = text
+
+    document.body.appendChild(el)
+
+    el.onclick = () => {el.remove()}
+
+    setTimeout(() => {
+        el.remove()
+    }, 5000)
+}
