@@ -10,6 +10,7 @@ const cInit = async () => {
     for (let word of raw_words){
         corpus.insert(word)
     }
+    $("#process").prop("disabled", false)
 }
 
 const solve = (size, grid) => {
@@ -44,7 +45,7 @@ const dfs = (row, col, seen, grid, gSize, curWord, path) => {
         if (!Object.keys(result).includes(curWord.length.toString())){
             result[curWord.length] = []
         }
-        result[curWord.length].push([curWord, 10, path])
+        result[curWord.length].push([curWord, 10, [...path]])
     }
     let matches = corpus.find(curWord)
     if (matches.length){
@@ -60,10 +61,10 @@ const dfs = (row, col, seen, grid, gSize, curWord, path) => {
                 curWord,
                 path
             )
-            path.splice(path.length - 1, 1)
+            path.pop()
         }
         seen[col][row] = 0
     }
 }
 
-cInit()
+window.onload = () => {cInit()}

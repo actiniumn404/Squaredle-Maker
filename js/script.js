@@ -83,7 +83,6 @@ const get_results = (words, cutoff, start = Date.now()) => {
         word_list = data_setify(word_list)
         word_list.sort()
 
-
         $("#results").append(`<h4>${size} ${isNaN(size) ? "words" : "letters"}</h4><ul></ul>`)
         for ([word, freq, path] of word_list) {
             if (
@@ -115,7 +114,7 @@ const get_results = (words, cutoff, start = Date.now()) => {
         if (mywords) {
             $("#results ul:last-of-type li").css("width", "initial")
             $("#results ul:last-of-type").css("grid-template-columns", `repeat(auto-fill, minmax(${Math.ceil(width) + 10}px, 1fr))`)
-            $("#results h4:last-of-type").append(` (${mywords} words)`)
+            $("#results h4:last-of-type").append(` (${mywords} word${mywords !== 1 ? 's': ''})`)
         } else {
             $("#results :is(h4, ul):last-of-type").remove()
         }
@@ -224,8 +223,12 @@ $("#word__close").click(() => {
     $("#wordDef").hide()
 })
 
-$("#name_input").keyup(() => {
+$("#name_input").keyup((e) => {
     pdata.name = $("#name_input").val()
+    if (e.code === "Enter"){
+        document.activeElement.blur()
+        save()
+    }
 })
 
 if (urlParams.get("puzzle")) {

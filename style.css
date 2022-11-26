@@ -9,7 +9,7 @@
 }
 
 body{
-    background: black;
+    background: #212121;
     margin: 0;
     color: var(--color);
     font-family: Arial, serif;
@@ -19,24 +19,29 @@ nav{
     width: 100%;
     padding: 0 calc((100% - var(--width)) / 2);
     background: var(--theme);
-    height: 40px;
+    height: 64px;
     display: flex;
-    align-items: center;
-    justify-content: center;
+}
+
+#actionbar{
     margin-bottom: 50px;
+    background: #2D2D2A;
+    padding: 10px calc((100% - var(--width)) / 2);
 }
 
 section{
+    background: #2D2D2A;
+    padding: 30px;
     display: flex;
+    height: calc(100vh - 200px);
     width: var(--width);
     margin: auto;
+    border-radius: 8px 8px 0 0;
+    column-gap: 20px;
 }
 
 #nav__logo{
-    display: flex;
-    align-items: center;
-    column-gap: 2px;
-    font-size: 28px;
+    padding: 8px;
 }
 
 main{
@@ -54,15 +59,14 @@ aside {
     flex-direction: column;
     row-gap: 30px;
     overflow: auto;
-    height: calc(100vh - 120px);
 }
 
 .square {
     background: #202020;
     border: 1px solid gray;
     border-radius: 10px;
-    width: calc((var(--width) / 2 - 10px) / var(--size) - 20px);
-    height: calc((var(--width) / 2 - 10px) / var(--size) - 20px);
+    width: calc((var(--width) / 2 - 10px) / var(--size) - 27px);
+    height: calc((var(--width) / 2 - 10px) / var(--size) - 27px);
     font-weight: bolder;
     display: inline-flex;
     align-items: center;
@@ -137,14 +141,25 @@ label[for="name_input"]{
 
 #name_input{
     background: none;
-    border: none;
-    border-bottom: 3px solid var(--theme);
-    font-size: 22px;
-    text-align: center;
+    border: 1px solid transparent;
+    font-size: 18px;
+    text-align: left;
     width: 200px;
-    margin-left: 20px;
+    height: fit-content;
+    height: -moz-fit-content;
+    padding: 5px;
     color: white;
     outline: none;
+    border-radius: 4px;
+    margin: auto 7px;
+}
+
+#name_input:hover{
+    border: 1px solid darkgray;
+}
+
+#name_input:focus{
+    border: 1px solid white;
 }
 
 .modal {
@@ -198,7 +213,7 @@ label[for="name_input"]{
 }
 
 .smallbtn{
-    color: var(--theme);
+    color: lightgray;
     background: none;
     font-size: 24px;
     border: none;
@@ -239,6 +254,7 @@ label[for="name_input"]{
     border-radius: 8px;
     padding: 10px;
     outline: none;
+    border: 0;
 }
 
 #deleteDelete{
@@ -321,17 +337,17 @@ label[for="name_input"]{
     width: 100%; /* Full width */
     height: 100%; /* Full height */
     overflow: auto; /* Enable scroll if needed */
-    background-color: rgba(255, 255, 255, 0.2); /* Black w/ opacity */
+    background-color: rgba(0, 0, 0, 0.7); /* Black w/ opacity */
     color: black;
 }
 
 /* Modal Content/Box */
 .modal-content {
     background-color: #fefefe;
-    margin: 15% auto; /* 15% from the top and centered */
+    margin: 100px auto; /* 15% from the top and centered */
     padding: 20px;
     border: 1px solid #888;
-    width: 80%; /* Could be more or less, depending on screen size */
+    width: calc(var(--width) - 30px);
     z-index: 6;
 }
 
