@@ -30,7 +30,7 @@ const solve = (size, grid) => {
 
     for (let i = 0; i < size; i++){
         for (let j = 0; j < size; j++){
-            dfs(i, j, seen, grid, size, "", [[i, j]])
+            dfs(i, j, seen, grid, size, "", [[j, i]])
         }
     }
     return result
