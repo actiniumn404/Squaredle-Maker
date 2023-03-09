@@ -93,7 +93,7 @@ const get_results = (words, cutoff, start = Date.now()) => {
                 words["Bonus"].push([word, freq, path])
                 continue
             }
-            if (awkward_words.has(btoa(word))) {
+            if (BannedGuesses.has(word) || InappropriateWords.has(word)) {
                 num_awkward += 1;
             }
             mywords += 1
@@ -102,7 +102,7 @@ const get_results = (words, cutoff, start = Date.now()) => {
     <li 
     class="${"word_" + size}" 
     data-data='${JSON.stringify([word, freq, path])}'
-    style="width: fit-content;width: -moz-fit-content;${awkward_words.has(btoa(word)) ? "color: mediumpurple" : ""}"
+    style="width: fit-content;width: -moz-fit-content;${BannedGuesses.has(word) || InappropriateWords.has(word) ? "color: mediumpurple" : ""}"
     >${word}</li>`)
             width = Math.max(width, $("#results ul:last-of-type li:last-of-type").width())
 
