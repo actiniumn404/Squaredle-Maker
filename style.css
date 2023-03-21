@@ -412,3 +412,16 @@ label[for="name_input"]{
     from {opacity: 0}
     to {opacity: 1;}
 }
+
+footer{
+    background: var(--theme);
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    padding: 10px;
+    text-align: center;
+}
+
+footer a{
+    color: #55d5ff;
+}

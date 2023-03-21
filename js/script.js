@@ -350,6 +350,14 @@ $("#download .close").click(() => {
     $("#download").hide()
 })
 
+$("#info_popup .close").click(() => {
+    $("#info_popup").hide()
+})
+
+$("#aboutSite").click(()=>{
+    $("#info_popup").show()
+})
+
 $("#deleteInput").keyup(() => {
     $("#deleteDelete").prop("disabled", !(pdata.name === $("#deleteInput").val()))
 })
