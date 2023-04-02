@@ -16,3 +16,18 @@ body{
     margin: 30px 0px;
     padding: 0;
 }
+
+.result_word{
+    width: fit-content;
+    width: -moz-fit-content;
+    text-decoration: underline wavy;
+    cursor: pointer;
+}
+
+.result_word.awkward{
+    color: mediumpurple;
+}
+
+.result_word:hover{
+    opacity: 0.8;
+}
