@@ -3,47 +3,23 @@ const InappropriateWords = new Set("asshole;ballsack;batshit;blowjob;boner;brush
 const Contractions = new Set("'twas 'tween 'twere ain't aren't can't could've couldn't couldn't've daren't daresn't didn't doesn't don't everybody's everyone's had've hadn't hasn't haven't here's how'd how'll how're how's i'd've isn't it'll ma'am may've might've mightn't must've mustn't mustn't've needn't ne'er o'clock ought've oughtn't oughtn't've shan't she's should've shouldn't somebody's someone's something's that'd that'll there'd there'll there's they'd they'll they're they've wasn't we'd've we've weren't what'd what'll what're what's what've when'd when's where'd where'll where's where've which's which've who'd who'd've who'll who're who's who've why'd why're why's won't would've wouldn't wouldn't've y'all you'd you'll you're you've".split(" "))
 
 function TrieNode(key) {
-    // the "key" value will be the character in sequence
     this.key = key;
 
-    // we keep a reference to parent
-    this.parent = null;
-
-    // we have hash of children
     this.children = {};
 
-    // check to see if the node is at the end
     this.end = false;
+
+    this.freq = undefined
 }
 
-// iterates through the parents to get the word.
-// time complexity: O(k), k = word length
-TrieNode.prototype.getWord = function () {
-    var output = [];
-    var node = this;
-
-    while (node !== null) {
-        output.unshift(node.key);
-        node = node.parent;
-    }
-
-    return output.join('');
-};
-
-// Trie.js - super simple JS implementation
-// Credit to tpae
-// https://gist.github.com/tpae/72e1c54471e88b689f85ad2b3940a8f0
-// -----------------------------------------
-
-// we implement Trie with just a simple root with null value.
 function Trie() {
     this.root = new TrieNode(null);
 }
 
 // inserts a word into the trie.
 // time complexity: O(k), k = word length
-Trie.prototype.insert = function (word) {
-    var node = this.root; // we start at the root 😬
+Trie.prototype.insert = function (word, freq) {
+    var node = this.root;
 
     // for every character in the word
     for (var i = 0; i < word.length; i++) {
@@ -88,38 +64,43 @@ Trie.prototype.contains = function (word) {
     return node.end;
 };
 
-// returns every word with given prefix
-// time complexity: O(p + n), p = prefix length, n = number of child paths
-Trie.prototype.find = function (prefix) {
-    var node = this.root;
-    var output = [];
+Trie.prototype.fromString = function(string){
+    console.time()
+    let backtrack = [this.root]
+    let cur = 0
+    let i = 0
+    let chars = new Set("abcdefghijklmnopqrstuvwxyz")
+    let numeric = new Set("0123456789.")
 
-    // for every character in the prefix
-    for (var i = 0; i < prefix.length; i++) {
-        // make sure prefix actually has words
-        if (node.children[prefix[i]]) {
-            node = node.children[prefix[i]];
-        } else {
-            // there's none. just return it.
-            return output;
+    while (i < string.length){
+        if (chars.has(string[i])){
+            if (!(backtrack[cur].children[string[i]])){
+                backtrack[cur].children[string[i]] = new TrieNode(string[i])
+            }
+            cur++
+            if (cur >= backtrack.length){
+                backtrack.push(undefined)
+            }
+            backtrack[cur] = backtrack[cur - 1].children[string[i]]
+            i++
+        }else if (numeric.has(string[i])){
+            let freq = ""
+            while (numeric.has(string[i])){
+                freq += string[i]
+                i++
+            }
+            backtrack[cur].freq = Number(freq)
+            backtrack[cur].end = true
+        }else if (string[i] === "-"){
+            i++
+            let back = ""
+            while (numeric.has(string[i])){
+                back += string[i]
+                i++
+            }
+
+            cur -= Number(back)
         }
     }
-
-    // recursively find all words in the node
-    findAllWords(node, output);
-
-    return output;
-};
-
-// recursive function to find all words in the given node.
-function findAllWords(node, arr) {
-    // base case, if node is at a word, push to output
-    if (node.end) {
-        arr.unshift(node.getWord());
-    }
-
-    // iterate through each children, call recursive findAllWords
-    for (var child in node.children) {
-        findAllWords(node.children[child], arr);
-    }
+    console.timeEnd()
 }

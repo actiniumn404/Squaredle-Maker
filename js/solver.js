@@ -1,24 +1,26 @@
 let tries = []
 
 const solver_init = async () => {
+    console.time()
     Utils.const.corpus = new Trie()
 
+    let words
     if ('caches' in window){
         Utils.const.cache = await caches.open("squaredle")
-        Utils.const.freq = await Utils.const.cache.match("data/words.json")
-        if (!Utils.const.freq){
-            Utils.const.cache.add("data/words.json")
-            Utils.const.freq = await Utils.const.cache.match("data/words.json")
+        words = await Utils.const.cache.match("data/words.txt")
+        if (!words){
+            Utils.const.cache.add("data/words.txt")
+            words = await Utils.const.cache.match("data/words.txt")
         }
-        Utils.const.freq = await Utils.const.freq.json()
+        words = await words.text()
     }else{
-        Utils.const.freq = await fetch("data/words.json")
-        Utils.const.freq = await Utils.const.freq.json()
+        words = await fetch("data/words.txt")
+        words = await words.text()
     }
 
-    for (let word in Utils.const.freq){
-        Utils.const.corpus.insert(word)
-    }
+    Utils.const.corpus.fromString(words)
+
+    console.timeEnd()
     $("#process").prop("disabled", false).html("Solve!")
 }
 
@@ -48,7 +50,6 @@ class Word{
     }
 
     activate(){
-        this.frequency = Utils.const.freq[this.word];
         this.awkward = (BannedGuesses.has(this.word) || InappropriateWords.has(this.word))
         if (this.awkward){
             this.flags.push("awkward")
@@ -66,6 +67,7 @@ class Solver {
         this.seen = []
         this.analysis = {
             awkward: 0,
+            awkward_list: [],
             words: 0
         }
         this.start = 0
@@ -85,28 +87,28 @@ class Solver {
         this.start = Date.now()
         for (let i = 0; i < this.size; i++) {
             for (let j = 0; j < this.size; j++) {
-                this.dfs(i, j, new Word("", [[j, i]]))
+                this.dfs(i, j, new Word("", [[j, i]]), Utils.const.corpus.root)
             }
         }
         return this.result
     }
 
-    dfs(row, col, cur) {
-        if (row < 0 || col < 0 || row >= this.size || col >= this.size || this.seen[col][row] || (!(/[a-zA-Z]+/).test(cur.word) && cur.word !== "")) {
-            cur.add_word(" ")
+    dfs(row, col, cur, corpus) {
+        if (row < 0 || col < 0 || row >= this.size || col >= this.size || this.seen[col][row]) {
             return
         }
-        cur.add_word(this.grid[col][row])
-        if (cur.word.length >= 4 && Utils.const.corpus.contains(cur.word)) {
+        if (cur.word.length >= 4 && corpus.end) {
             if (!Object.keys(this.result).includes(cur.word.length.toString())) {
                 this.result[cur.word.length] = []
             }
             let obj = Object.assign(Object.create(Object.getPrototypeOf(cur)), cur)
             obj.activate()
+            obj.frequency = corpus.freq
 
             // Analytical stuff
             if (obj.awkward){
                 this.analysis.awkward += 1
+                this.analysis.awkward_list.push(obj)
             }
 
             if (obj.frequency < this.cutoff){
@@ -115,20 +117,24 @@ class Solver {
                 this.result[cur.word.length].push(obj)
             }
         }
-        let matches = Utils.const.corpus.find(cur.word)
-        if (matches.length) {
-            this.seen[col][row] = true
-            for (let [cRow, cCol] of [[0, 1], [0, -1], [1, 1], [1, 0], [1, -1], [-1, 1], [-1, 0], [-1, -1]]) {
-                cur.add_path( [col + cCol, row + cRow])
-                this.dfs(
-                    row + cRow,
-                    col + cCol,
-                    cur,
-                )
-                cur.pop()
+
+        this.seen[col][row] = true
+        for (let [cRow, cCol] of [[0, 1], [0, -1], [1, 1], [1, 0], [1, -1], [-1, 1], [-1, 0], [-1, -1]]) {
+            if (row+cRow < 0 || col+cCol < 0 || row+cRow >= this.size || col+cCol >= this.size || !corpus.children.hasOwnProperty(this.grid[col+cCol][row+cRow])){
+                continue;
             }
-            this.seen[col][row] = false
+            cur.add_word(this.grid[col+cCol][row+cRow])
+            cur.add_path( [col + cCol, row + cRow])
+            this.dfs(
+                row + cRow,
+                col + cCol,
+                cur,
+                corpus.children[this.grid[col+cCol][row+cRow]]
+            )
+            cur.pop()
         }
+        this.seen[col][row] = false
+
     }
     display(element){
         element = $(element)
@@ -162,45 +168,33 @@ class Solver {
             $("#results ul:last-of-type").css("grid-template-columns", `repeat(auto-fill, minmax(${Math.ceil(width) + 10}px, 1fr))`)
             $("#results h4:last-of-type").append(` (${word_list.length} word${word_list.length !== 1 ? 's': ''})`)
         }
-        $("#results ul li").click(async (e) => {
-            let element = $(e.currentTarget)
-            let popupData = element.data("data")
-            let popupWord = element.html()
+        $("#results ul li").click((e)=>{Utils.show_word($(e.currentTarget).html())})
 
-            $("#wordDef").show()
-            $(".word__form").remove()
-            let wordData = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${popupWord}`)
-            wordData = await wordData.json()
-            $("#word__def").html(popupWord)
+        this.display_analysis()
 
-            $("#wordDef > #manualCateg").html(element.hasClass("word_Bonus") ? "Add to Required" : "Add to Bonus")
+        $("#time_numwords").html(`${this.analysis.words} result${this.analysis.words !== 1 ? "s" : ""} in ${((Date.now() - this.start) / 1000).toFixed(2)} seconds`)
+    }
 
-            if (wordData.title === "No Definitions Found") {
-                return $("#wordDef").append(`<div class="word__form">Sorry, no definitions were found</div>`)
-            }
-            for (let meaning of wordData[0].meanings) {
-                $("#wordDef").append(`<div class="word__form">
-                    <p class="word__desc">
-                        <strong>${popupWord}</strong>
-                        <i class="fas fa-volume-up hear-word" data-source="${(wordData[0].phonetics[wordData[0].phonetics.length - 1] ?? {}).audio}"></i>
-                        <i>${meaning.partOfSpeech}</i>
-                        <ol></ol>
-                    </p>`)
-                for (let def of meaning.definitions) {
-                    $("#wordDef ol:last-of-type").append(`<li>${def.definition}</li>`)
-                }
+    display_analysis(){
+        // Preload
+        $(".analysis_content").hide()
+        $(".analysis_invoke").data("open", "no").find("i").removeClass("fa-caret-down").addClass("fa-caret-right")
+        $("#analysis_awkward_list").html("")
 
-            }
-            $(".hear-word").click((e) => {
-                let source = $(e.currentTarget).data('source')
-                if (source) {
-                    new Audio(source).play();
-                }
-            })
-        })
+        // Awkward
+        let width = 70;
+        this.analysis.awkward_list = Utils.remove_duplicates(this.analysis.awkward_list)
 
-        $("#time_numwords").html(`${this.analysis.words} result${this.analysis.words !== 1 ? "s" : ""} in ${((Date.now() - this.start) / 1000).toFixed(2)} seconds<br>
-        ${this.analysis.awkward} awkward word${this.analysis.awkward !== 1 ? "s" : ""}`)
+        $("#analysis_awkward .num").html(`${this.analysis.awkward_list.length} awkward word${this.analysis.awkward_list.length === 1 ? "" : "s"}`)
+        $("#analysis_awkward .msg").html(this.analysis.awkward_list.length === 0 ? "Congrats!" : "Here are said words:")
+
+        for (let word of this.analysis.awkward_list){
+            $("#analysis_awkward_list").append(word.html)
+            width = Math.max(width, $("#analysis_awkward_list li:last-of-type").width())
+        }
+
+        $("#analysis_awkward_list").css("grid-template-columns", `repeat(auto-fill, minmax(${Math.ceil(width) + 10}px, 1fr))`)
+        $("#analysis_awkward_list li").click((e)=>{Utils.show_word($(e.currentTarget).html())})
     }
 
 }

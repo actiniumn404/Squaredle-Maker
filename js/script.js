@@ -133,11 +133,14 @@ $("#process").click(async () => {
     let start = Date.now()
     btn.prop("disabled", true)
 
-    let results = new Solver(game.puzzle, Number($("#freq_cutoff").val()))
+    let results = new Solver(game.puzzle, 3)
     results.solve()
     results.display($("#results"))
 
     btn.prop("disabled", false)
+
+    $("#results__analysis").show()
+
 
     //if (resu["error"]) {
     //    return $("#results").html(`<strong style="color: var(--theme)">ERROR: ${res["error"]}</strong>`)
@@ -188,6 +191,10 @@ $("#name_input").keyup((e) => {
         document.activeElement.blur()
         save()
     }
+})
+
+$("#results__analysis").click(()=>{
+    $("#solvingModal").show()
 })
 
 
@@ -262,8 +269,19 @@ $("#deletePopup .close").click(() => {
     $("#deletePopup").hide()
 })
 
-$("#download .close").click(() => {
-    $("#download").hide()
+$(".BigModal .close").click((e)=>{
+    $(e.currentTarget).parent().parent().parent().hide()
+})
+
+$(".analysis_invoke").click((e)=>{
+    let element = $(e.currentTarget)
+    if (element.data("open") === "no"){
+        element.data("open", "yes").find("i").removeClass("fa-caret-right").addClass("fa-caret-down")
+        $(element.data("invoke")).show()
+    }else{
+        $(element.data("invoke")).hide()
+        element.data("open", "no").find("i").removeClass("fa-caret-down").addClass("fa-caret-right")
+    }
 })
 
 $("#deleteInput").keyup(() => {

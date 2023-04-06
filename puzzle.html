@@ -31,6 +31,7 @@
         <h1>Results</h1>
         <span id="results_notice">To see this puzzle's results, please press the red "Solve!" button.</span>
         <span id="time_numwords"></span>
+        <span id="results__analysis">Read Full Analysis</span>
         <div id="results"></div>
     </aside>
     <main>
@@ -63,9 +64,18 @@
     </div>
 </div>
 
-<div id="solvingModal" class="BigModal" style="display: block">
+<div id="solvingModal" class="BigModal">
     <div class="modal-content">
-        <h1 class="header">Solving Puzzle...</h1>
+        <h1 class="header">Puzzle Analysis <span class="close">&times;</span></h1>
+        <span class="analysis_invoke" data-invoke="#analysis_awkward" data-open="no">Awkward Words <i class="fa-solid fa-caret-right"></i></span>
+        <div id="analysis_awkward" class="analysis_content">
+            I found <span class="num">0 awkward words</span> in your puzzle. <span class="msg">Congratulations!</span>
+            <ul id="analysis_awkward_list"></ul>
+        </div>
+        <span class="analysis_invoke" data-invoke="#analysis_words_per_square" data-open="no">Words Per Square <i class="fa-solid fa-caret-right"></i></span>
+        <div id="analysis_words_per_square" class="analysis_content">
+            I found <span class="num">0</span> awkward words in your puzzle. <span class="msg">Congratulations!</span>
+        </div>
     </div>
 </div>
 

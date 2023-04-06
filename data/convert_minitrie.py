@@ -5,6 +5,8 @@ import string
 import math
 import csv
 
+freq = {}
+
 class Trie:
     def __init__(self, key: str, parent=None, end=False, freq=0):
         self.key = key
@@ -49,9 +51,9 @@ def get_frequency_list():
 def cB_to_freq(cB):
     return 10 ** (cB / 100)
 
-allowed_characters = set(string.ascii_lowercase)
-words = set(open("words_alpha.txt", "r").read().split("\n"))
-names = set(next(csv.reader(open("names-short.csv"))))
+#allowed_characters = set(string.ascii_lowercase)
+#words = set(open("words_alpha.txt", "r").read().split("\n"))
+#names = set(next(csv.reader(open("names-short.csv"))))
 
 def get_frequency_dict():
     freqs = {}
@@ -69,10 +71,16 @@ def get_frequency_dict():
         res[word] = freqs.get(word, 0)
     return res
 
-freq = get_frequency_dict()
+#freq = get_frequency_dict()
 
-for word in freq:
-    insert(word, root)
+#for word in freq:
+#    insert(word, root)
+
+insert("tomorrow", root)
+insert("to", root)
+insert("tulic", root)
+insert("talic", root)
+insert("tau", root)
 
 # Condense
 res = ""
@@ -95,5 +103,6 @@ def condense(cur: Trie):
 
 condense(root)
 
-with open("words.txt", "w") as file:
-    file.write(res)
+#with open("words.txt", "w") as file:
+#    file.write(res)
+print(res)
