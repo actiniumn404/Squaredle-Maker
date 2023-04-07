@@ -133,7 +133,7 @@ $("#process").click(async () => {
     let start = Date.now()
     btn.prop("disabled", true)
 
-    let results = new Solver(game.puzzle, 3)
+    let results = new Solver(game.puzzle, Number($("#settings__freq_cutoff").val()))
     results.solve()
     results.display($("#results"))
 
@@ -357,6 +357,8 @@ $("#squareFreq").click((e) => {
         })
     }
 })
+
+$("#changeSettings").click(()=>{$("#settingsModal").show()})
 
 $(document).mousemove(function(e) {
     if ($("#squareFreq").hasClass("selected")){

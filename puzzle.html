@@ -79,6 +79,20 @@
     </div>
 </div>
 
+<div id="settingsModal" class="BigModal" style="display: block">
+    <div class="modal-content">
+        <h1 class="header">Settings <span class="close">&times;</span></h1>
+        <div class="option">
+            <span data-info="How big should this puzzle be?">Puzzle Size</span>
+            <input type="number" value="4" min="3" max="10" id="settings__size">
+        </div>
+        <div class="option">
+            <span data-info="All words that have a word frequency below this will be counted bonus.  (Tip: try decimals)">Word Frequency Cutoff</span>
+            <input type="number" value="2" min="0" max="10" id="settings__freq_cutoff">
+        </div>
+    </div>
+</div>
+
 <script src="js/utils.js"></script>
 <script src="js/const.js"></script>
 <script src="js/solver.js" defer></script>

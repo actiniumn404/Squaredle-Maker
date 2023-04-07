@@ -352,34 +352,12 @@ label[for="name_input"]{
     animation: in ease 0.5s;
     animation-fill-mode: forwards;
     position: relative;
-    top: 50px;
+    top: 30px;
 }
 
 .modal-content h1{
     margin: 0;
 }
-
-@keyframes in {
-    0% {
-        position: relative;
-        top: 50px;
-        opacity: 0.8;
-    }
-    100% {
-        top: 0;
-        opacity: 1;
-    }
-}
-
-@keyframes fadein {
-    from {
-        opacity: 0;
-    }
-    to{
-        opacity: 1;
-    }
-}
-
 
 #shareEmojis{
     width: min(100%, 500px);
@@ -461,7 +439,7 @@ label[for="name_input"]{
 @keyframes in {
     0% {
         position: relative;
-        top: 50px;
+        top: 30px;
         opacity: 0.8;
     }
     100% {
