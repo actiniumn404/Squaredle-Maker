@@ -16,11 +16,11 @@ class Game{
                 this.puzzle = new Puzzle(puzzle_raw.name, puzzle_raw.size, puzzle_raw.puzzle)
                 Utils.const.original_data = this.puzzle.json()
             }else{
-                location.href = "home.html"
+                location.href = "index.html"
                 return;
             }
         }else{
-            location.href = "home.html"
+            location.href = "index.html"
             return;
         }
 
@@ -336,7 +336,7 @@ $("#deleteDelete").click(() => {
     puzzles.splice(localStorage.current, 1)
     localStorage.puzzles = JSON.stringify(puzzles)
 
-    location.href = "home.html"
+    location.href = "index.html"
 })
 
 $("#wordDef > #manualCateg").click(() => {
