@@ -1,9 +1,9 @@
 const Utils = {
     newPuzzle: (base, size, puzzle="                ")=>{
         base = base.trim()
-        let existing_names = JSON.parse(localStorage.puzzles).map(e => e.name)
+        let existing_names = JSON.parse(localStorage.puzzles ?? []).map(e => e.name)
         let name;
-        if (!existing_names.includes("Untitled Squaredle")) {
+        if (!existing_names.includes(base)) {
             name = base;
         } else {
             name = base+" (1)"
@@ -17,7 +17,7 @@ const Utils = {
         puzzles.push({
             name: name,
             puzzle: puzzle,
-            size: 4,
+            size: size,
             revBonus: {},
             revReq: {},
         })
