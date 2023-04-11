@@ -68,7 +68,8 @@ class Solver {
         this.analysis = {
             awkward: 0,
             awkward_list: [],
-            words: 0
+            words: 0,
+            wps: {} // words per square
         }
         this.start = 0
 
@@ -171,6 +172,7 @@ class Solver {
         $("#results ul li").click((e)=>{Utils.show_word($(e.currentTarget).html())})
 
         this.display_analysis()
+        this.tally_wps()
 
         $("#time_numwords").html(`${this.analysis.words} result${this.analysis.words !== 1 ? "s" : ""} in ${((Date.now() - this.start) / 1000).toFixed(2)} seconds`)
     }
@@ -180,6 +182,7 @@ class Solver {
         $(".analysis_content").hide()
         $(".analysis_invoke").data("open", "no").find("i").removeClass("fa-caret-down").addClass("fa-caret-right")
         $("#analysis_awkward_list").html("")
+        $("#analysis_words_per_square .info").html("For each square, the top and bottom numbers represent the number of required and bonus words that use said square. Click on a square to see which words use it.")
 
         // Awkward
         let width = 70;
@@ -197,4 +200,17 @@ class Solver {
         $("#analysis_awkward_list li").click((e)=>{Utils.show_word($(e.currentTarget).html())})
     }
 
+    tally_wps(){
+        for (let group in this.result){
+            for (let word of this.result[group]){
+                for (let path of word.path){
+                    if (!this.analysis.wps[path]){
+                        this.analysis.wps[path] = []
+                    }
+                    this.analysis.wps[path].push(word)
+                }
+            }
+        }
+        console.log(this.analysis.wps)
+    }
 }

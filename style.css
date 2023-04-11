@@ -431,6 +431,36 @@ label[for="name_input"]{
     padding: 0;
 }
 
+#squareContextMenu{
+    z-index: 5;
+    position: fixed;
+    background: #131313;
+    padding: 5px;
+    top: 200px;
+    left: 700px;
+    border-radius: 4px;
+    box-shadow: 0 0 4px gray;
+    border: 1px solid #363636;
+    min-width: 220px;
+    display: none;
+}
+
+#squareContextMenu button{
+    background: transparent;
+    border: none;
+    color: white;
+    cursor: pointer;
+    padding: 5px 10px;
+    border-radius: 2px;
+    font-weight: bolder;
+    text-align: left;
+    width: 100%;
+}
+
+#squareContextMenu button:hover{
+    background: #424242;
+}
+
 @keyframes fadein {
     from {opacity: 0}
     to {opacity: 1;}

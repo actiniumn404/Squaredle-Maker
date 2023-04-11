@@ -64,7 +64,7 @@ class Puzzle{
         }
     }
 
-    load(element){
+    load(element, prefix=""){
         this.display = jQuery(element)
         this.display.empty()
 
@@ -74,14 +74,35 @@ class Puzzle{
             let j = 0;
             for (let square of row){
                 let name = `square${i}-${j}`;
-                $(this.display.children()[i]).append(`<td id="${name}" class='square${square.disabled ? " hide": ""}'>
+                $(this.display.children()[i]).append(`<td id="${prefix}${name}" class='square${square.disabled ? " hide": ""}'>
                     <div class='squareCircle'></div>
-                    <input maxlength='1' value="${square.letter}"">
+                    <input maxlength='1' ${square.disabled ? "disabled": `value="${square.letter}"`}>
                 </td>`)
                 let a = i;
                 let b = j;
                 $("#" + name).on("input", ()=>{
                     this.puzzle[a][b].letter = $("#" + name + " input").val() || " "
+                }).keydown((e)=>{
+                    let coords = name.match(/square(\d+)-(\d+)/)
+                    let size = game.puzzle.size
+                    if (e.key === "ArrowRight"){
+                        $(`#square${coords[1]}-${Math.min(Number(coords[2]) + 1, size)} input`).focus()
+                    }else if (e.key === "ArrowLeft"){
+                        $(`#square${coords[1]}-${Math.max(Number(coords[2]) - 1, 0)} input`).focus()
+                    }else if (e.key === "ArrowUp"){
+                        $(`#square${Math.max(Number(coords[1]) - 1, 0)}-${coords[2]} input`).focus()
+                    }else if (e.key === "ArrowDown"){
+                        $(`#square${Math.min(Number(coords[1]) + 1, size)}-${coords[2]} input`).focus()
+                    }
+                }).contextmenu((e)=>{
+                    Utils.const.active = [Number(a), Number(b)]
+                    e.preventDefault()
+                    $("#squareContextMenu").css({
+                        left: e.pageX,
+                        top: e.pageY
+                    }).show()
+
+                    $("#squareCtxHide").html(`${game.puzzle.puzzle[Number(a)][Number(b)].disabled ? "Show" : "Hide"} Square`)
                 })
                 j++;
             }
@@ -119,6 +140,12 @@ class Square{
     }
 }
 
+$(document).on("click", (e)=>{
+    if (!$.contains(document.getElementById("squareContextMenu"), e.target) && e.target.id !== "squareContextMenu"){
+        $("#squareContextMenu").hide()
+    }
+})
+
 $("#puzzle_size").on("change keyup input", () => {
     let size = Number($("#puzzle_size").val())
     if (size && 3 <= size && size <= 10) {
@@ -133,9 +160,9 @@ $("#process").click(async () => {
     let start = Date.now()
     btn.prop("disabled", true)
 
-    let results = new Solver(game.puzzle, Number($("#settings__freq_cutoff").val()))
-    results.solve()
-    results.display($("#results"))
+    Utils.const.results = new Solver(game.puzzle, Number($("#settings__freq_cutoff").val()))
+    Utils.const.results.solve()
+    Utils.const.results.display($("#results"))
 
     btn.prop("disabled", false)
 
@@ -344,29 +371,12 @@ $("#wordPath").click(async () => {
     }
 })
 
-$("#squareFreq").click((e) => {
-    $(".smallbtn:not(#squareFreq)").removeClass("selected")
-    if ($("#squareFreq").hasClass("selected")){
-        $("#squareFreq").removeClass("selected")
-        $("#sfreqPopup").hide()
-    }else{
-        $("#squareFreq").addClass("selected")
-        $("#sfreqPopup").show().css({
-            left: e.pageX,
-            top: e.pageY
-        })
-    }
-})
-
 $("#changeSettings").click(()=>{$("#settingsModal").show()})
 
-$(document).mousemove(function(e) {
-    if ($("#squareFreq").hasClass("selected")){
-        $("#sfreqPopup").css({
-            left: e.pageX,
-            top: e.pageY
-        }).show()
-    }
+$("#squareCtxHide").click(()=>{
+    $("#squareContextMenu").hide()
+    game.puzzle.puzzle[Utils.const.active[0]][Utils.const.active[1]].disabled = !game.puzzle.puzzle[Utils.const.active[0]][Utils.const.active[1]].disabled
+    game.puzzle.load($("#puzzle"))
 })
 
 const alert = (text) => {

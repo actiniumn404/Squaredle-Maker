@@ -1,5 +1,5 @@
 const Utils = {
-    newPuzzle: (base)=>{
+    newPuzzle: (base, size, puzzle="                ")=>{
         base = base.trim()
         let existing_names = JSON.parse(localStorage.puzzles).map(e => e.name)
         let name;
@@ -16,7 +16,7 @@ const Utils = {
         let puzzles = JSON.parse(localStorage.puzzles)
         puzzles.push({
             name: name,
-            puzzle: "                ",
+            puzzle: puzzle,
             size: 4,
             revBonus: {},
             revReq: {},
