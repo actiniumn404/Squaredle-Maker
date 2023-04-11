@@ -14,7 +14,7 @@
 <body>
 <nav>
     <a href="home.html"><img src="assets/logo.svg" height="64" alt="M" id="nav__logo"></a>
-    <input id="name_input" value="Untitled Squaredle" maxlength="40">
+    <input id="name_input" value="" maxlength="40">
     <button id="aboutSite" class="smallbtn"><i class="fa-solid fa-circle-info"></i></button>
 </nav>
 <div id="actionbar">
@@ -44,10 +44,10 @@
     <button id="wordPath" class="smallCoolBtn">Show on board</button>
 </div>
 <div id="deletePopup" class="modal">
-    <h2 class="header">Are you ABSOLUTELY sure? <span class="close">&times;</span></h2>
-    <p>This action <b>CANNOT</b> be undone. Deleting <span class="deletename">{name}</span> will permanently delete all
+    <h2 class="header"><i class="fa-solid fa-trash"></i> Are you ABSOLUTELY sure? <span class="close">&times;</span></h2>
+    <p>This action <b>CANNOT</b> be undone. Deleting <b class="deletename">{name}</b> will PERMANENTLY delete all
         your hard work making this puzzle. Be ABSOLUTELY sure before deleting this puzzle.</p>
-    <p>To confirm, please type out <b><span class="deletename">{name}</span></b> below:</p>
+    <p>To confirm, please write <b><span class="deletename">{name}</span></b> below:</p>
     <input id="deleteInput" placeholder="{name}" autocomplete="off">
 
     <button id="deleteDelete">I understand the consequences, delete this puzzle.</button>

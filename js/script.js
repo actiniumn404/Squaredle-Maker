@@ -7,14 +7,20 @@ class Game{
         }
 
         // Load Puzzle
+        console.log(Number(this.url.get("puzzle")), isNaN(Number(this.url.get("puzzle"))))
         if (this.url.get("puzzle")) {
-            if (0 <= Number(this.url.get("puzzle")) && Number(this.url.get("puzzle")) < this.misc.puzzles.length) {
+            if (0 <= Number(this.url.get("puzzle")) && Number(this.url.get("puzzle")) < this.misc.puzzles.length && !isNaN(Number(this.url.get("puzzle")))) {
                 localStorage.current = Number(this.url.get("puzzle"))
                 let puzzle_raw = this.misc.puzzles[Number(this.url.get("puzzle"))]
+                $("#name_input").val(puzzle_raw.name)
                 this.puzzle = new Puzzle(puzzle_raw.name, puzzle_raw.size, puzzle_raw.puzzle)
+                Utils.const.original_data = this.puzzle.json()
+            }else{
+                location.href = "home.html"
+                return;
             }
         }else{
-            location.pathname = location.pathname.replace("puzzle", "home")
+            location.href = "home.html"
             return;
         }
 
@@ -121,6 +127,18 @@ class Puzzle{
         }
         return res
     }
+
+    json(){
+        return {
+            name: this.name,
+            puzzle: this.repr(),
+            size: this.size
+        }
+    }
+
+    compare(a){
+        return JSON.stringify(this.json()) === JSON.stringify(a.json())
+    }
 }
 
 class Square{
@@ -213,7 +231,7 @@ $("#word__close").click(() => {
 })
 
 $("#name_input").keyup((e) => {
-    pdata.name = $("#name_input").val()
+    game.puzzle.name = $("#name_input").val()
     if (e.code === "Enter"){
         document.activeElement.blur()
         save()
@@ -229,19 +247,17 @@ $("#curPuzzle").html("")
 
 const save = () => {
     let puzzles = JSON.parse(localStorage.puzzles)
-    puzzles[Number(localStorage.current)] = pdata
+    puzzles[Number(localStorage.current)] = game.puzzle.json()
     localStorage.puzzles = JSON.stringify(puzzles)
-    original_data = {...pdata}
-    $(`#curPuzzle option:nth-of-type(${Number(localStorage.current) + 1})`).html(pdata.name)
+    Utils.const.original_data = game.puzzle.json()
 }
 
 
 $('#savePuzzle').click(() => save())
 
 window.onbeforeunload = () => {
-    if (JSON.stringify(original_data) !== JSON.stringify(pdata)) {
-        return () => {
-        }
+    if (JSON.stringify(Utils.const.original_data) !== JSON.stringify(game.puzzle.json())) {
+        return () => {}
     }
 }
 
@@ -286,9 +302,9 @@ $("#freq_cutoff").on("change keyup input click", () => {
 })
 
 $("#deletePuzzle").click(() => {
-    $("#deletePopup .deletename").html(pdata.name)
+    $("#deletePopup .deletename").html(game.puzzle.name)
     $("#deleteDelete").prop("disabled", true)
-    $("#deleteInput").attr("placeholder", pdata.name)
+    $("#deleteInput").attr("placeholder", game.puzzle.name)
     $("#deletePopup").show()
 })
 
@@ -312,17 +328,15 @@ $(".analysis_invoke").click((e)=>{
 })
 
 $("#deleteInput").keyup(() => {
-    $("#deleteDelete").prop("disabled", !(pdata.name === $("#deleteInput").val()))
+    $("#deleteDelete").prop("disabled", !(game.puzzle.name === $("#deleteInput").val()))
 })
 
 $("#deleteDelete").click(() => {
     let puzzles = JSON.parse(localStorage.puzzles)
     puzzles.splice(localStorage.current, 1)
     localStorage.puzzles = JSON.stringify(puzzles)
-    urlParams.delete("puzzle")
-    localStorage.current = 0
 
-    location.search = "?" + urlParams.toString()
+    location.href = "home.html"
 })
 
 $("#wordDef > #manualCateg").click(() => {
