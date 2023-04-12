@@ -11,8 +11,10 @@ const solver_init = async () => {
         if (!words){
             Utils.const.cache.add("data/words.txt")
             words = await Utils.const.cache.match("data/words.txt")
+            location.reload()
+        }else{
+            words = await words.text()
         }
-        words = await words.text()
     }else{
         words = await fetch("data/words.txt")
         words = await words.text()
