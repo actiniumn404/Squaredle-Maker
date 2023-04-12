@@ -9,7 +9,7 @@ const solver_init = async () => {
         Utils.const.cache = await caches.open("squaredle")
         words = await Utils.const.cache.match("data/words.txt")
         if (!words){
-            Utils.const.cache.add("data/words.txt")
+            await Utils.const.cache.add("data/words.txt")
             words = await Utils.const.cache.match("data/words.txt")
             location.reload()
         }else{
