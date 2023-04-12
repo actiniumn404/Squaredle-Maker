@@ -54,7 +54,17 @@ class Word{
         if (this.awkward){
             this.flags.push("awkward")
         }
-        this.html = `<li class="result_word ${"word_" + this.word.length} ${this.flags.join(' ')}" data-word="${this.word}">${this.word}</li>`
+        this.html = `<li class="result_word ${"word_" + this.word.length} ${this.flags.join(' ')}" data-word='${JSON.stringify(this.json())}'>${this.word}</li>`
+    }
+
+    json(){
+        return {
+            word: this.word,
+            path: this.path,
+            flags: this.flags,
+            frequency: this.frequency,
+            awkward: this.awkward
+        }
     }
 }
 
@@ -72,6 +82,7 @@ class Solver {
             wps: {} // words per square
         }
         this.start = 0
+        this.letters = new Set("abcdefghijklmnopqrstuvwxyz")
 
         for (let i = 0; i < this.size; i++) {
             this.seen.push([])
@@ -88,14 +99,14 @@ class Solver {
         this.start = Date.now()
         for (let i = 0; i < this.size; i++) {
             for (let j = 0; j < this.size; j++) {
-                this.dfs(i, j, new Word("", [[j, i]]), Utils.const.corpus.root)
+                this.dfs(j, i, new Word(this.grid[i][j], [[i, j]]), Utils.const.corpus.root.children[this.grid[i][j]])
             }
         }
         return this.result
     }
 
     dfs(row, col, cur, corpus) {
-        if (row < 0 || col < 0 || row >= this.size || col >= this.size || this.seen[col][row]) {
+        if (row < 0 || col < 0 || row >= this.size || col >= this.size || this.seen[col][row] || !this.letters.has(cur.word[cur.word.length - 1])) {
             return
         }
         if (cur.word.length >= 4 && corpus.end) {
@@ -103,6 +114,7 @@ class Solver {
                 this.result[cur.word.length] = []
             }
             let obj = Object.assign(Object.create(Object.getPrototypeOf(cur)), cur)
+            obj.path = [...cur.path]
             obj.activate()
             obj.frequency = corpus.freq
 
@@ -137,7 +149,7 @@ class Solver {
         this.seen[col][row] = false
 
     }
-    display(element){
+    display(element, print){
         element = $(element)
         element.html("")
 
@@ -157,7 +169,7 @@ class Solver {
                 }
             })
 
-            $("#results").append(`<h4>${category} ${category === "BONUS" ? "words" : "letters"}</h4><ul></ul>`)
+            element.append(`<h4>${category} ${category === "BONUS" ? "words" : "letters"}</h4><ul></ul>`)
 
             for (let word of word_list) {
                 this.analysis.words += 1
@@ -169,12 +181,18 @@ class Solver {
             $("#results ul:last-of-type").css("grid-template-columns", `repeat(auto-fill, minmax(${Math.ceil(width) + 10}px, 1fr))`)
             $("#results h4:last-of-type").append(` (${word_list.length} word${word_list.length !== 1 ? 's': ''})`)
         }
-        $("#results ul li").click((e)=>{Utils.show_word($(e.currentTarget).html())})
 
-        this.display_analysis()
-        this.tally_wps()
+        if (!print){
+            $("#results ul li").click((e)=>{
+                Utils.show_word($(e.currentTarget).html())
+                Utils.const.active = $(e.currentTarget).data("word")
+            })
 
-        $("#time_numwords").html(`${this.analysis.words} result${this.analysis.words !== 1 ? "s" : ""} in ${((Date.now() - this.start) / 1000).toFixed(2)} seconds`)
+            this.display_analysis()
+            this.tally_wps()
+
+            $("#time_numwords").html(`${this.analysis.words} result${this.analysis.words !== 1 ? "s" : ""} in ${((Date.now() - this.start) / 1000).toFixed(2)} seconds`)
+        }
     }
 
     display_analysis(){
@@ -211,6 +229,5 @@ class Solver {
                 }
             }
         }
-        console.log(this.analysis.wps)
     }
 }

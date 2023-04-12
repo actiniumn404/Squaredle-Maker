@@ -1,7 +1,7 @@
 const Utils = {
     newPuzzle: (base, size, puzzle="                ")=>{
         base = base.trim()
-        let existing_names = JSON.parse(localStorage.puzzles ?? []).map(e => e.name)
+        let existing_names = JSON.parse(localStorage.puzzles ?? "[]").map(e => e.name)
         let name;
         if (!existing_names.includes(base)) {
             name = base;
@@ -13,7 +13,7 @@ const Utils = {
                 i += 1;
             }
         }
-        let puzzles = JSON.parse(localStorage.puzzles)
+        let puzzles = JSON.parse(localStorage.puzzles ?? "[]")
         puzzles.push({
             name: name,
             puzzle: puzzle,

@@ -152,8 +152,92 @@ main > *{
     font-weight: bold;
 }
 
+#aboutSite{
+    margin-left: auto;
+    display: inline-block;
+    outline: none;
+    color: white;
+}
+
+.smallbtn {
+    color: lightgray;
+    background: none;
+    font-size: 24px;
+    border: none;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.smallbtn:hover{
+    opacity: 0.8;
+}
+
 @media (max-width: 1052px){
     :root{
         --width: 95vw;
+    }
+}
+
+/* The Modal (background) */
+.BigModal {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 5; /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgba(255, 255, 255, 0.3); /* Black w/ opacity */
+    color: black;
+    animation: fadein ease 0.5s;
+}
+
+/* Modal Content/Box */
+.modal-content {
+    background-color: #fefefe;
+    margin: 100px auto; /* 15% from the top and centered */
+    padding: 20px;
+    border: 1px solid #888;
+    width: calc(var(--width) - 30px);
+    z-index: 6;
+    animation-delay: 0.5s;
+    animation: in ease 0.5s;
+    animation-fill-mode: forwards;
+    position: relative;
+    top: 30px;
+}
+
+.modal-content h1{
+    margin: 0;
+}
+
+.close{
+    float: right;
+    font-size: 30px;
+    font-weight: bolder;
+    cursor: pointer;
+    user-select: none;
+    color: red;
+}
+
+@keyframes in {
+    0% {
+        position: relative;
+        top: 30px;
+        opacity: 0.8;
+    }
+    100% {
+        top: 0;
+        opacity: 1;
+    }
+}
+
+@keyframes fadein {
+    from {
+        opacity: 0;
+    }
+    to{
+        opacity: 1;
     }
 }
