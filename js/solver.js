@@ -54,7 +54,17 @@ class Word{
         if (this.awkward){
             this.flags.push("awkward")
         }
-        this.html = `<li class="result_word ${"word_" + this.word.length} ${this.flags.join(' ')}" data-word="${this.word}">${this.word}</li>`
+        this.html = `<li class="result_word ${"word_" + this.word.length} ${this.flags.join(' ')}" data-word='${JSON.stringify(this.json())}'>${this.word}</li>`
+    }
+
+    json(){
+        return {
+            word: this.word,
+            path: this.path,
+            flags: this.flags,
+            frequency: this.frequency,
+            awkward: this.awkward
+        }
     }
 }
 
@@ -89,7 +99,7 @@ class Solver {
         this.start = Date.now()
         for (let i = 0; i < this.size; i++) {
             for (let j = 0; j < this.size; j++) {
-                this.dfs(j, i, new Word(this.grid[i][j], [j, i]), Utils.const.corpus.root.children[this.grid[i][j]])
+                this.dfs(j, i, new Word(this.grid[i][j], [[i, j]]), Utils.const.corpus.root.children[this.grid[i][j]])
             }
         }
         return this.result
@@ -104,6 +114,7 @@ class Solver {
                 this.result[cur.word.length] = []
             }
             let obj = Object.assign(Object.create(Object.getPrototypeOf(cur)), cur)
+            obj.path = [...cur.path]
             obj.activate()
             obj.frequency = corpus.freq
 
@@ -172,7 +183,10 @@ class Solver {
         }
 
         if (!print){
-            $("#results ul li").click((e)=>{Utils.show_word($(e.currentTarget).html())})
+            $("#results ul li").click((e)=>{
+                Utils.show_word($(e.currentTarget).html())
+                Utils.const.active = $(e.currentTarget).data("word")
+            })
 
             this.display_analysis()
             this.tally_wps()
@@ -215,6 +229,5 @@ class Solver {
                 }
             }
         }
-        console.log(this.analysis.wps)
     }
 }

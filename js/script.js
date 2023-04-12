@@ -88,8 +88,6 @@ class Puzzle{
                         $(`#square${Math.max(Number(coords[1]) - 1, 0)}-${coords[2]} input`).focus()
                     }else if (e.key === "ArrowDown"){
                         $(`#square${Math.min(Number(coords[1]) + 1, size)}-${coords[2]} input`).focus()
-                    }else if (e.key === "Enter"){
-                        $("#process").click()
                     }
                 }).contextmenu((e)=>{
                     Utils.const.active = [Number(a), Number(b)]
@@ -191,14 +189,6 @@ $(document).on("click", (e)=>{
     }
 })
 
-$("#puzzle_size").on("change keyup input", () => {
-    let size = Number($("#puzzle_size").val())
-    if (size && 3 <= size && size <= 10) {
-        p_size = size
-        generate_puzzle(p_size)
-    }
-    pdata.size = $("#puzzle_size").val()
-})
 
 $("#process").click(async () => {
     let btn = $("#process")
@@ -289,7 +279,10 @@ const save = () => {
 }
 
 
-$('#savePuzzle').click(() => save())
+$('#savePuzzle').click(() => {
+    save()
+    alert("Saved!")
+})
 
 window.onbeforeunload = () => {
     if (JSON.stringify(Utils.const.original_data) !== JSON.stringify(game.puzzle.json())) {
@@ -301,6 +294,9 @@ document.onkeydown = (e) => {
     if ((e.ctrlKey || e.metaKey) && e.key === 's') {
         e.preventDefault();
         save()
+        alert("Puzzle Saved")
+    }else if (e.key === "Enter"){
+        $("#process").click()
     }
 }
 
@@ -380,11 +376,11 @@ function timeout(ms) { // Awesome function
 
 $("#wordPath").click(async () => {
     $("#wordDef").hide()
-    let path = popupData[2];
+    let path = Utils.const.active.path;
     let i = 0;
     $(`.squareCircle`).css("background", `none`).hide()
     for ([col, row] of path){
-        $(`#theSquare${col}-${row} .squareCircle`)
+        $(`#square${col}-${row} .squareCircle`)
             .css("background", `hsl(${280 / path.length * i}, 100%, 50%)`)
             .css("width", `calc(var(--s) * (1 - ${0.5 / path.length * i}))`)
             .css("height", `calc(var(--s) * (1 - ${0.5 / path.length * i}))`)
@@ -392,6 +388,7 @@ $("#wordPath").click(async () => {
         i++;
         await timeout(400);
     }
+    $("#hidePath").show()
 })
 
 $("#changeSettings").click(()=>{$("#settingsModal").show()})
@@ -443,6 +440,15 @@ $("#rotateRight").click(async ()=>{
     $("#puzzle").css("transform", "none")
     $("#puzzle .square").css("transform", "none")
     $("#rotateLeft, #rotateRight").prop("disabled", false)
+})
+
+$("#hidePath").click(()=>{
+    $(".squareCircle").hide()
+    $("#hidePath").hide()
+})
+
+$("#aboutSite").click(()=>{
+    $("#info").show()
 })
 
 const alert = (text) => {

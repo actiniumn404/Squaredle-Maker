@@ -38,11 +38,12 @@
     <main>
         <table id="puzzle"></table>
         <button id="process" class="coolbtn" disabled>Loading words...</button>
+        <button id="hidePath" class="coolbtn">Hide Path</button>
     </main>
 </section>
 <div id="wordDef" class="modal">
     <h2 class="header"><span id="word__def">LOADING</span> <span id="word__close" class="close">&times;</span></h2>
-    <button id="manualCateg" class="smallCoolBtn">Add to Bonus</button>
+    <!--<button id="manualCateg" class="smallCoolBtn">Add to Bonus</button>-->
     <button id="wordPath" class="smallCoolBtn">Show on board</button>
 </div>
 <div id="deletePopup" class="modal">
@@ -73,11 +74,11 @@
             I found <span class="num">0 awkward words</span> in your puzzle. <span class="msg">Congratulations!</span>
             <ul id="analysis_awkward_list"></ul>
         </div>
-        <span class="analysis_invoke" data-invoke="#analysis_words_per_square" data-open="no">Words Per Square <i class="fa-solid fa-caret-right"></i></span>
+        <!--<span class="analysis_invoke" data-invoke="#analysis_words_per_square" data-open="no">Words Per Square <i class="fa-solid fa-caret-right"></i></span>
         <div id="analysis_words_per_square" class="analysis_content">
             <span class="info">Tallying up words...</span>
             <table class="puzzle"></table>
-        </div>
+        </div>-->
     </div>
 </div>
 
@@ -92,6 +93,40 @@
             <span data-info="All words that have a word frequency below this will be counted bonus.  (Tip: try decimals)">Word Frequency Cutoff</span>
             <input type="number" value="2" min="0" max="10" id="settings__freq_cutoff">
         </div>
+    </div>
+</div>
+
+<div id="info" class="BigModal">
+    <div class="modal-content">
+        <h1>Information <span class="close">&times;</span></h1>
+        This is a solver and maker for the popular word game <a href="https://squaredle.app" target="_blank">Squaredle</a>. This is not affiliated
+        in any way with Squaredle LLC.
+        <br>
+        <br>
+        Start by selecting a puzzle template, and fill in the puzzle grid. You can select the size of your puzzle through
+        the <i class="fas fa-gear"></i> settings tab. Once you are ready, press the solve button to see your puzzle's results.
+        You can let the website sort words into required and bonus by adjusting the "Frequency Cutoff" in the settings tab.
+        All words with a frequency less than the set cutoff will be counted bonus. The frequency cutoff goes from 0 to 10,
+        decimals included. Be on the lookout for <i>awkward words!</i> These words are counted as "sensetive words" in Squaredle.
+        Make sure your puzzle doesn't have too much. You can the sensitive words present in your puzzle through the "Read Full Analysis"
+        button after your puzzle is solved. When you're done, be sure to save your puzzle through the <i class="fas fa-save"></i> button!
+        <br>
+        <br>
+        <b>IMPORTANT: </b>Please do not use this tool to artificially gain a spot on the leaderboard. Not only is this no
+        fun for everyone else, your account might also get blocked for cheating by Squaredle.
+        <br>
+        <h1 style="font-size: 30px;">Tips & Tricks</h1>
+        <ul>
+            <li>Use your arrow keys to navigate through the puzzle</li>
+            <li>Hit enter to solve!</li>
+            <li>Use Control-Enter (or Meta-Enter on Apple computers) as a shortcut to save the puzzle</li>
+        </ul>
+        <h1 style="font-size: 30px;">Help out!</h1>
+        Got something you want to change, or just want to help out? Squaredle Maker is open source on
+        <a href="https://github.com/actiniumn404/Squaredle-Maker" target="_blank">GitHub.</a> Feel free to send in a pull request or submit an issue.
+        <br>
+        <br>
+        "Squaredle" trademark used with permission.
     </div>
 </div>
 
