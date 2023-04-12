@@ -13,7 +13,7 @@ const Utils = {
                 i += 1;
             }
         }
-        let puzzles = JSON.parse(localStorage.puzzles)
+        let puzzles = JSON.parse(localStorage.puzzles ?? "[]")
         puzzles.push({
             name: name,
             puzzle: puzzle,

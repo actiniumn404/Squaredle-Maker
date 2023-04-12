@@ -13,6 +13,7 @@ class Game{
                 localStorage.current = Number(this.url.get("puzzle"))
                 let puzzle_raw = this.misc.puzzles[Number(this.url.get("puzzle"))]
                 $("#name_input").val(puzzle_raw.name)
+                $("#settings__size").val(Number(puzzle_raw.size))
                 this.puzzle = new Puzzle(puzzle_raw.name, puzzle_raw.size, puzzle_raw.puzzle)
                 Utils.const.original_data = this.puzzle.json()
             }else{
@@ -28,18 +29,6 @@ class Game{
 
         // Load Solver
         solver_init()
-    }
-
-    resize(size){
-        if (typeof(size) !== "number"){
-            size = Number(size)
-        }
-
-        if (size < this.puzzle.size){
-            if (!confirm("Are you sure you want to reduce the puzzle size?")){
-                return
-            }
-        }
     }
 }
 
@@ -82,7 +71,7 @@ class Puzzle{
                 let name = `square${i}-${j}`;
                 $(this.display.children()[i]).append(`<td id="${prefix}${name}" class='square${square.disabled ? " hide": ""}'>
                     <div class='squareCircle'></div>
-                    <input maxlength='1' ${square.disabled ? "disabled": `value="${square.letter}"`}>
+                    <input maxlength='1' ${square.disabled ? "disabled": `value="${square.letter !== " " ? square.letter : ""}"`}>
                 </td>`)
                 let a = i;
                 let b = j;
@@ -99,6 +88,8 @@ class Puzzle{
                         $(`#square${Math.max(Number(coords[1]) - 1, 0)}-${coords[2]} input`).focus()
                     }else if (e.key === "ArrowDown"){
                         $(`#square${Math.min(Number(coords[1]) + 1, size)}-${coords[2]} input`).focus()
+                    }else if (e.key === "Enter"){
+                        $("#process").click()
                     }
                 }).contextmenu((e)=>{
                     Utils.const.active = [Number(a), Number(b)]
@@ -138,6 +129,42 @@ class Puzzle{
 
     compare(a){
         return JSON.stringify(this.json()) === JSON.stringify(a.json())
+    }
+
+    resize(size){
+        if (typeof(size) !== "number"){
+            size = Number(size)
+        }
+        if (isNaN(size)){
+            return;
+        }
+        if (size < 3 || size > 10){
+            return;
+        }
+
+        if (size < this.size){
+            if (!confirm("Are you sure you want to reduce the puzzle size? This will remove some of your squares.")){
+                return
+            }
+            for (let i = 0; i < this.size; i++){
+                this.puzzle[i].length = size;
+            }
+            this.puzzle.length = size;
+
+        }else{
+            for (let i = 0; i < this.size; i++){
+                for (let j = 0; j < size - this.size; j++){
+                    this.puzzle[i].push(new Square(" "))
+                }
+            }
+            for (let i = this.size; i < size; i++){
+                this.puzzle.push([])
+                for (let j = 0; j < size; j++){
+                    this.puzzle[i].push(new Square(" "))
+                }
+            }
+        }
+        this.size = size
     }
 }
 
@@ -195,15 +222,18 @@ $("#process").click(async () => {
 
 $("#exportDscd").click(() => {
     // Get Emojis
-    let index = 0;
-    let size = p_size;
     let res = ""
-    for (let letter of get_puzzle()) {
-        res += `:squaredle${letter.toUpperCase()}: `
-        if (index % size === size - 1) {
-            res += "\n"
+    for (let row of game.puzzle.puzzle){
+        for (let col of row){
+            if (col.disabled || col.letter === " "){
+                res += ":black_large_square: "
+            }else if (col.letter === "!"){
+                res += ":squaredleBang: "
+            }else{
+                res += `:squaredle${col.letter.toUpperCase()}: `
+            }
         }
-        index += 1
+        res += "\n"
     }
     $("#shareEmojis").val(res)
     $("#download").show()
@@ -215,14 +245,20 @@ $("#exportDscd").click(() => {
 
 })
 
-$("#printResults").click(() => {
+$("#printResults").click(async () => {
     let frame = window.open()
-    frame.document.head.innerHTML += `<link rel="stylesheet" href="${location.origin + "/results.css"}">`
-    frame.document.body.innerHTML = `
-<h1 id="puzzle_name">${$("#name_input").val()}</h1>
-<span id="numwords">${num_words} result${num_words !== 1 ? "s" : ""}</span>
-${$("#results").prop("outerHTML")}
-`
+    let css = await fetch("results.css")
+    css = await css.text()
+    frame.document.body.innerHTML += `<style>${css}</style>`
+    frame.document.body.innerHTML += `<h1>${game.puzzle.name}</h1>`
+    frame.document.body.classList.add("print")
+    frame.document.body.innerHTML += `<table id="puzzle"></table>`
+    game.puzzle.load(frame.document.getElementById("puzzle"))
+    if (!Utils.const.results){
+        return
+    }
+    frame.document.body.innerHTML += `${Utils.const.results.analysis.words} Total Words<br>${Utils.const.results.analysis.awkward_list.length} Awkward Words ${Utils.const.results.analysis.awkward_list.length ? "(In <span class='awkward'>Wavy Underline</span>)": ""}`
+    frame.document.body.innerHTML += `${$("#results").prop("outerHTML")}`
 })
 
 
@@ -260,33 +296,6 @@ window.onbeforeunload = () => {
         return () => {}
     }
 }
-
-$("#newPuzzle").click(() => {
-    let existing_names = JSON.parse(localStorage.puzzles).map(e => e.name)
-    let name;
-    if (!existing_names.includes("Untitled Squaredle")) {
-        name = "Untitled Squaredle";
-    } else {
-        name = "Untitled Squaredle (1)"
-        let i = 1;
-        while (existing_names.includes(name)) {
-            name = `Untitled Squaredle (${i})`
-            i += 1;
-        }
-    }
-    let puzzles = JSON.parse(localStorage.puzzles)
-    puzzles.push({
-        name: name,
-        puzzle: "                ",
-        size: 4,
-        revBonus: {},
-        revReq: {},
-    })
-    localStorage.puzzles = JSON.stringify(puzzles)
-
-    urlParams.set("puzzle", puzzles.length - 1)
-    location.search = "?" + urlParams.toString()
-})
 
 document.onkeydown = (e) => {
     if ((e.ctrlKey || e.metaKey) && e.key === 's') {
@@ -391,6 +400,49 @@ $("#squareCtxHide").click(()=>{
     $("#squareContextMenu").hide()
     game.puzzle.puzzle[Utils.const.active[0]][Utils.const.active[1]].disabled = !game.puzzle.puzzle[Utils.const.active[0]][Utils.const.active[1]].disabled
     game.puzzle.load($("#puzzle"))
+})
+
+$("#settings__size").on("input", ()=>{
+    game.puzzle.resize($("#settings__size").val())
+    game.puzzle.load($("#puzzle"))
+})
+
+function timeout(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+$("#rotateLeft").click(async ()=>{
+    $("#rotateLeft, #rotateRight").prop("disabled", true)
+    $("#puzzle, #puzzle .square").css("transition", "1s")
+    $("#puzzle").css("transform", "rotate(-90deg)")
+    $("#puzzle .square").css("transform", "rotate(90deg)")
+
+    await timeout(1000)
+
+    game.puzzle.puzzle = game.puzzle.puzzle.map((val, index) => game.puzzle.puzzle.map(row => row[row.length-1-index]));
+    game.puzzle.load($("#puzzle"))
+
+    $("#puzzle, #puzzle .square").css("transition", "0s")
+    $("#puzzle").css("transform", "none")
+    $("#puzzle .square").css("transform", "none")
+    $("#rotateLeft, #rotateRight").prop("disabled", false)
+})
+
+$("#rotateRight").click(async ()=>{
+    $("#rotateLeft, #rotateRight").prop("disabled", true)
+    $("#puzzle, #puzzle .square").css("transition", "1s")
+    $("#puzzle").css("transform", "rotate(90deg)")
+    $("#puzzle .square").css("transform", "rotate(-90deg)")
+
+    await timeout(1000)
+
+    game.puzzle.puzzle = game.puzzle.puzzle.map((val, index) => game.puzzle.puzzle.map(row => row[index]).reverse())
+    game.puzzle.load($("#puzzle"))
+
+    $("#puzzle, #puzzle .square").css("transition", "0s")
+    $("#puzzle").css("transform", "none")
+    $("#puzzle .square").css("transform", "none")
+    $("#rotateLeft, #rotateRight").prop("disabled", false)
 })
 
 const alert = (text) => {
