@@ -40,7 +40,7 @@ def dfs(visited: list, row: int, col: int, target: str, grid: list, curWord: str
 
 @app.route("/")
 def page_home():
-    return open("index.html", "r").read()
+    return open("puzzle.html", "r").read()
 
 
 @app.route("/favicon.ico")

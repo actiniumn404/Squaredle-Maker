@@ -1,0 +1,243 @@
+*, *::before, *::after{
+    box-sizing: border-box;
+}
+
+:root{
+    --width: 1000px;
+    --padding: calc(50vw - var(--width) / 2);
+    --theme: #b82828;
+    --color: white;
+}
+
+body{
+    background: #212121;
+    margin: 0;
+    color: var(--color);
+    font-family: Arial, serif;
+}
+
+nav{
+    width: 100%;
+    padding: 0 calc((100% - var(--width)) / 2);
+    background: var(--theme);
+    height: 64px;
+    display: flex;
+    align-items: center;
+    font-weight: 900;
+}
+
+#nav__logo{
+    padding: 12px;
+}
+
+#nav__text{
+    font-size: 20px;
+}
+
+main > *{
+    padding: 0 var(--padding);
+}
+
+.puzzle {
+    background: #2D2D2A;
+    padding: 20px 15px;
+    border: 1px solid #626262;
+    border-radius: 4px;
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: 0.2s;
+}
+
+.square {
+    background: #202020;
+    border: 1px solid gray;
+    border-radius: 20%;
+    width: calc((var(--width) / 3 - 10px) / var(--size) - 27px);
+    height: calc((var(--width) / 3 - 10px) / var(--size) - 27px);
+    font-weight: bolder;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    margin: 2px;
+    text-align: center;
+    color: white;
+    font-size: calc(0.5 * ((var(--width) / 4 - 10px) / var(--size) - 20px));
+    text-transform: capitalize;
+}
+
+.square.hide{
+    opacity: 0.1;
+}
+
+#choose{
+    background: #2a2a2a;
+    padding: 20px var(--padding);
+}
+
+.choose__option{
+    padding: 10px;
+    width: fit-content;
+    width: -moz-fit-content;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    cursor: pointer;
+}
+
+.choose__option:hover .puzzle{
+    filter: brightness(1.2);
+}
+
+.choose__option__label{
+    margin: 10px 2px 0 2px;
+    font-weight: bold;
+    font-size: 18px;
+}
+
+.choose__option__caption{
+    margin: 2px 2px 0 2px;
+    font-weight: lighter;
+    font-size: 14px;
+}
+
+#choose__options{
+    display: flex;
+    justify-content: space-between;
+    column-gap: min(40px, 1%);
+}
+
+.header{
+    margin-left: 10px;
+    font-size: 24px;
+    font-weight: bolder;
+    margin-bottom: 10px;
+}
+
+.myPuzzle {
+    width: min(300px, calc((100vw - 50px) / 2));
+    display: flex;
+    flex-direction: column;
+    align-self: stretch;
+    background: #2D2D2A;
+    padding: 20px 20px 10px 20px;
+    cursor: pointer;
+    transition: 0.2s;
+    color: white;
+    text-decoration: none;
+}
+
+.myPuzzle:hover{
+    filter: brightness(1.2);
+}
+
+#recent__wrapper{
+    display: flex;
+    flex-wrap: wrap;
+    row-gap: 20px;
+    column-gap: 20px;
+    justify-content: space-evenly;
+}
+
+#recent{
+    padding: 20px var(--padding);
+}
+
+.myPuzzle__name{
+    display: block;
+    font-size: 18px;
+    margin-top: 10px;
+    font-weight: bold;
+}
+
+#aboutSite{
+    margin-left: auto;
+    display: inline-block;
+    outline: none;
+    color: white;
+}
+
+.smallbtn {
+    color: lightgray;
+    background: none;
+    font-size: 24px;
+    border: none;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.smallbtn:hover{
+    opacity: 0.8;
+}
+
+@media (max-width: 1052px){
+    :root{
+        --width: 95vw;
+    }
+}
+
+/* The Modal (background) */
+.BigModal {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 5; /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgba(255, 255, 255, 0.3); /* Black w/ opacity */
+    color: black;
+    animation: fadein ease 0.5s;
+}
+
+/* Modal Content/Box */
+.modal-content {
+    background-color: #fefefe;
+    margin: 100px auto; /* 15% from the top and centered */
+    padding: 20px;
+    border: 1px solid #888;
+    width: calc(var(--width) - 30px);
+    z-index: 6;
+    animation-delay: 0.5s;
+    animation: in ease 0.5s;
+    animation-fill-mode: forwards;
+    position: relative;
+    top: 30px;
+}
+
+.modal-content h1{
+    margin: 0;
+}
+
+.close{
+    float: right;
+    font-size: 30px;
+    font-weight: bolder;
+    cursor: pointer;
+    user-select: none;
+    color: red;
+}
+
+@keyframes in {
+    0% {
+        position: relative;
+        top: 30px;
+        opacity: 0.8;
+    }
+    100% {
+        top: 0;
+        opacity: 1;
+    }
+}
+
+@keyframes fadein {
+    from {
+        opacity: 0;
+    }
+    to{
+        opacity: 1;
+    }
+}

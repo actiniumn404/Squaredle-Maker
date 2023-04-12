@@ -4,8 +4,7 @@
     <title>Squaredle Maker</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="results.css">
+    <link rel="stylesheet" href="css/home.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.0/css/all.min.css">
     <link rel="icon" href="assets/logo.svg">
 
@@ -14,76 +13,137 @@
 <body>
 <nav>
     <img src="assets/logo.svg" height="64" alt="M" id="nav__logo">
-    <input id="name_input" value="Untitled Squaredle" maxlength="40">
-    <button id="aboutSite" class="smallbtn" onclick="$('#info_popup').show()"><i class="fa-solid fa-circle-info"></i></button>
+    <span id="nav__text">Squaredle Maker</span>
+    <button id="aboutSite" class="smallbtn"><i class="fa-solid fa-circle-info"></i></button>
 </nav>
-<div id="actionbar">
-    <button id="changeSettings" class="smallbtn"><i class="fas fa-gear"></i></button>
-    <button id="newPuzzle" class="smallbtn"><i class="fas fa-plus"></i></button>
-    <button id="savePuzzle" class="smallbtn"><i class="fas fa-save"></i></button>
-    <button id="exportDscd" class="smallbtn"><i class="fa-solid fa-share-from-square"></i></button>
-    <button id="printResults" class="smallbtn"><i class="fa-solid fa-print"></i></button>
-    <button id="deletePuzzle" class="smallbtn"><i class="fa-solid fa-trash"></i></button>
-    <button id="squareFreq" class="smallbtn"><i class="fa-solid fa-chart-simple"></i></button>
-</div>
-<section>
-    <aside>
-        <h1>Settings</h1>
-        <select id="curPuzzle" name="curPuzzle"></select>
-        <div id="side__size" class="flex-center">
-            <label for="puzzle_size">Puzzle Size:</label>
-            <input id="puzzle_size" name="size" type="number" value="4" max="10" min="3">
+<main>
+    <div id="choose">
+        <div class="header" id="choose__header">
+            Create New Puzzle
         </div>
-        <div id="side__freq" class="flex-center">
-            <label for="freq_cutoff">Frequency Cutoff:</label>
-            <input id="freq_cutoff" name="size" type="number" value="2" max="10" min="0">
+        <div id="choose__options">
+            <div class="choose__option" id="addSquare">
+                <table class="puzzle">
+                    <tr>
+                        <td class="square" style="--size:4;"></td>
+                        <td class="square" style="--size:4;"></td>
+                        <td class="square" style="--size:4;"></td>
+                        <td class="square" style="--size:4;"></td>
+                    </tr>
+                    <tr>
+                        <td class="square" style="--size:4;"></td>
+                        <td class="square" style="--size:4;"></td>
+                        <td class="square" style="--size:4;"></td>
+                        <td class="square" style="--size:4;"></td>
+                    </tr>
+                    <tr>
+                        <td class="square" style="--size:4;"></td>
+                        <td class="square" style="--size:4;"></td>
+                        <td class="square" style="--size:4;"></td>
+                        <td class="square" style="--size:4;"></td>
+                    </tr>
+                    <tr>
+                        <td class="square" style="--size:4;"></td>
+                        <td class="square" style="--size:4;"></td>
+                        <td class="square" style="--size:4;"></td>
+                        <td class="square" style="--size:4;"></td>
+                    </tr>
+                </table>
+                <div class="choose__option__label">Square</div>
+                <div class="choose__option__caption">This is Squaredle, not Circle. (You can also change the size)</div>
+            </div>
+            <div class="choose__option" id="addWaffle">
+                <table class="puzzle">
+                    <tr>
+                        <td class="square" style="--size:5;"></td>
+                        <td class="square" style="--size:5;"></td>
+                        <td class="square" style="--size:5;"></td>
+                        <td class="square" style="--size:5;"></td>
+                        <td class="square" style="--size:5;"></td>
+                    </tr>
+                    <tr>
+                        <td class="square" style="--size:5;"></td>
+                        <td class="square hide" style="--size:5;"></td>
+                        <td class="square" style="--size:5;"></td>
+                        <td class="square hide" style="--size:5;"></td>
+                        <td class="square" style="--size:5;"></td>
+                    </tr>
+                    <tr>
+                        <td class="square" style="--size:5;"></td>
+                        <td class="square" style="--size:5;"></td>
+                        <td class="square" style="--size:5;"></td>
+                        <td class="square" style="--size:5;"></td>
+                        <td class="square" style="--size:5;"></td>
+                    </tr>
+                    <tr>
+                        <td class="square" style="--size:5;"></td>
+                        <td class="square hide" style="--size:5;"></td>
+                        <td class="square" style="--size:5;"></td>
+                        <td class="square hide" style="--size:5;"></td>
+                        <td class="square" style="--size:5;"></td>
+                    </tr>
+                    <tr>
+                        <td class="square" style="--size:5;"></td>
+                        <td class="square" style="--size:5;"></td>
+                        <td class="square" style="--size:5;"></td>
+                        <td class="square" style="--size:5;"></td>
+                        <td class="square" style="--size:5;"></td>
+                    </tr>
+                </table>
+                <div class="choose__option__label">Waffle</div>
+                <div class="choose__option__caption">Delicious #wafflegame coming right up!</div>
+            </div>
+            <div class="choose__option" id="add10x10">
+                <table class="template">
+                    <table class="puzzle" id="10x10"></table>
+                </table>
+                <div class="choose__option__label">10x10</div>
+                <div class="choose__option__caption">You're not going to do this, right?</div>
+            </div>
         </div>
-        <h1>Results</h1>
-        <span id="time_numwords"></span>
-        <div id="results"></div>
-    </aside>
-    <main>
-        <table id="puzzle"></table>
-        <button id="process" class="coolbtn" disabled>See Results</button>
-    </main>
-</section>
-<div id="wordDef" class="modal">
-    <h2 class="header"><span id="word__def">LOADING</span> <span id="word__close" class="close">&times;</span></h2>
-    <button id="manualCateg" class="smallCoolBtn">Add to Bonus</button>
-    <button id="wordPath" class="smallCoolBtn">Show on board</button>
-</div>
-<div id="deletePopup" class="modal">
-    <h2 class="header">Are you ABSOLUTELY sure? <span class="close">&times;</span></h2>
-    <p>This action <b>CANNOT</b> be undone. Deleting <span class="deletename">{name}</span> will permanently delete all
-        your hard work making this puzzle. Be ABSOLUTELY sure before deleting this puzzle.</p>
-    <p>To confirm, please type out <b><span class="deletename">{name}</span></b> below:</p>
-    <input id="deleteInput" placeholder="{name}" autocomplete="off">
-
-    <button id="deleteDelete">I understand the consequences, delete this puzzle.</button>
-</div>
-<div id="sfreqPopup" class="tooltip">
-    Hover over a square to see its stats!
-</div>
-<div id="download" class="BigModal">
-    <div class="modal-content">
-        <h1>Share! <span class="close">&times;</span></h1>
-        <textarea id="shareEmojis" spellcheck="false"></textarea>
-        <button id="download__copyEmoji" class="coolbtn">Copy Emojis</button>
     </div>
-</div>
-<div id="info_popup" class="BigModal">
-    <div class="modal-content">
-        <h1>General Information <span class="close">&times;</span></h1>
-        Squaredle Maker is not affiliated with <a href="https://squaredle.app">Squaredle LLC</a> and does not use the same word list as Squaredle.<br><br>
+    <div id="recent">
+        <div class="header">Your Puzzles</div>
+        <div id="recent__wrapper">
 
+        </div>
+    </div>
+</main>
+
+<div id="info" class="BigModal">
+    <div class="modal-content">
+        <h1>Information <span class="close">&times;</span></h1>
+        This is a solver and maker for the popular word game <a href="https://squaredle.app">Squaredle</a>. This is not affiliated
+        in any way with Squaredle LLC.
+        <br>
+        <br>
+        Start by selecting a puzzle template, and fill in the puzzle grid. You can select the size of your puzzle through
+        the <i class="fas fa-gear"></i> settings tab. Once you are ready, press the solve button to see your puzzle's results.
+        You can let the website sort words into required and bonus by adjusting the "Frequency Cutoff" in the settings tab.
+        All words with a frequency less than the set cutoff will be counted bonus. The frequency cutoff goes from 0 to 10,
+        decimals included. Be on the lookout for <i>awkward words!</i> These words are counted as "sensetive words" in Squaredle.
+        Make sure your puzzle doesn't have too much. You can the sensitive words present in your puzzle through the "Read Full Analysis"
+        button after your puzzle is solved. When you're done, be sure to save your puzzle through the <i class="fas fa-save"></i> button!
+        <br>
+        <br>
+        <b>IMPORTANT: </b>Please do not use this tool to artificially gain a spot on the leaderboard. Not only is this no
+        fun for everyone else, your account might also get blocked for cheating by Squaredle.
+        <br>
+        <h1 style="font-size: 30px;">Tips & Tricks</h1>
+        <ul>
+            <li>Use your arrow keys to navigate through the puzzle</li>
+            <li>Hit enter to solve!</li>
+            <li>Use Control-Enter (or Meta-Enter on Apple computers) as a shortcut to save the puzzle</li>
+        </ul>
+        <h1 style="font-size: 30px;">Help out!</h1>
+        Got something you want to change, or just want to help out? Squaredle Maker is open source on
+        <a href="https://github.com/actiniumn404/Squaredle-Maker">GitHub.</a> Feel free to send in a pull request or submit an issue.
+        <br>
+        <br>
         "Squaredle" trademark used with permission.
     </div>
 </div>
-<footer>
-    Squaredle Maker is not affiliated with <a href="https://squaredle.app/">Squaredle LLC</a>. "Squaredle" trademark used with permission.
-</footer>
-<script src="js/const.js"></script>
-<script src="js/solver.js" defer></script>
-<script src="js/script.js" defer></script>
+<script src="js/utils.js"></script>
+<script src="js/homepage.js"></script>
 </body>
 </html>

@@ -13,6 +13,80 @@ body{
     display: grid;
     list-style: none;
     grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
-    margin: 30px 0px;
+    margin: 30px 0;
     padding: 0;
+}
+
+.result_word{
+    width: fit-content;
+    width: -moz-fit-content;
+    text-decoration: underline wavy;
+    cursor: pointer;
+}
+
+.print .result_word{
+    text-decoration: none;
+}
+
+.result_word.awkward{
+    color: mediumpurple;
+}
+
+.result_word:hover{
+    opacity: 0.8;
+}
+
+:root{
+    --width: 1000px;
+}
+
+.square {
+    background: #202020;
+    border: 1px solid gray;
+    border-radius: 10px;
+    width: calc((var(--width) / 2 - 10px) / var(--size) - 27px);
+    height: calc((var(--width) / 2 - 10px) / var(--size) - 27px);
+    font-weight: bolder;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    margin: 7px;
+}
+
+.square input{
+    background: none;
+    border: none;
+    width: 80%;
+    height: 80%;
+    text-align: center;
+    color: white;
+    font-size: calc(0.5 * ((var(--width) / 2 - 10px) / var(--size) - 20px));
+    font-weight: bolder;
+    outline: none;
+    text-transform: capitalize;
+    z-index: 2;
+}
+
+.square.hide{
+    opacity: 0.1;
+}
+
+.print .square{
+    background: none;
+}
+
+.print .square input{
+    color: rgb(26, 26, 26);
+    pointer-events: none;
+}
+
+.print .awkward{
+    text-decoration: underline wavy;
+}
+
+@media (max-width: 1052px){
+    :root{
+        --width: 95vw;
+    }
 }
