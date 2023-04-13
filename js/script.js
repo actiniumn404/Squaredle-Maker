@@ -317,9 +317,6 @@ $("#deletePopup .close").click(() => {
     $("#deletePopup").hide()
 })
 
-$(".BigModal .close").click((e)=>{
-    $(e.currentTarget).parent().parent().parent().hide()
-})
 
 $(".analysis_invoke").click((e)=>{
     let element = $(e.currentTarget)
@@ -473,4 +470,16 @@ const alert = (text) => {
     }, 5000)
 }
 
-let game = new Game()
+let game;
+
+window.onload = async () => {
+    game = new Game()
+
+    let information = await fetch("info.html")
+    information = await information.text()
+    $("#info .modal-content").html(information)
+    
+    $(".BigModal .close").click((e)=>{
+        $(e.currentTarget).parent().parent().parent().hide()
+    })
+}

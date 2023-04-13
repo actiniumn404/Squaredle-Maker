@@ -40,15 +40,19 @@ $("#add10x10").click(()=>{
     location.href = "puzzle.html?puzzle=" + Utils.newPuzzle("Untitled 10x10", 10, " ".repeat(100))
 })
 
-$(".BigModal .close").click((e)=>{
-    $(e.currentTarget).parent().parent().parent().hide()
-})
-
 $("#aboutSite").click(()=>{
     $("#info").show()
 })
 
-window.onload = ()=>{
+window.onload = async () => {
     fill("#10x10", 10, "", letters=7)
     loadPuzzles()
+
+    let information = await fetch("info.html")
+    information = await information.text()
+    $("#info .modal-content").html(information)
+
+    $(".BigModal .close").click((e)=>{
+        $(e.currentTarget).parent().parent().parent().hide()
+    })
 }
