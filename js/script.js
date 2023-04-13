@@ -237,7 +237,7 @@ $("#exportDscd").click(() => {
 
 $("#printResults").click(async () => {
     let frame = window.open()
-    let css = await fetch("results.css")
+    let css = await fetch("css/results.css")
     css = await css.text()
     frame.document.body.innerHTML += `<style>${css}</style>`
     frame.document.body.innerHTML += `<h1>${game.puzzle.name}</h1>`
