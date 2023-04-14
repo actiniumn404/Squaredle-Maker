@@ -7,7 +7,6 @@ class Game{
         }
 
         // Load Puzzle
-        console.log(Number(this.url.get("puzzle")), isNaN(Number(this.url.get("puzzle"))))
         if (this.url.get("puzzle")) {
             if (0 <= Number(this.url.get("puzzle")) && Number(this.url.get("puzzle")) < this.misc.puzzles.length && !isNaN(Number(this.url.get("puzzle")))) {
                 localStorage.current = Number(this.url.get("puzzle"))
@@ -183,6 +182,89 @@ class Square{
     }
 }
 
+class ManualWordSort{
+    constructor(data) {
+        data = this.load()
+        this.required = new Set(data.words)
+        this.bonus = new Set(data.bonus)
+
+        Utils.const.original_sort = this.json()
+        this.display()
+    }
+
+    isRequired(word){
+        return this.required.has(word)
+    }
+
+    isBonus(word){
+        return this.bonus.has(word)
+    }
+
+    addRequired(word){
+        this.required.add(word)
+        this.display()
+    }
+
+    removeRequired(word){
+        this.required.delete(word)
+        this.display()
+    }
+
+    addBonus(word){
+        this.bonus.add(word)
+        this.display()
+    }
+
+    removeBonus(word){
+        this.bonus.delete(word)
+        this.display()
+    }
+
+    load(){
+        return JSON.parse(localStorage.manualSort ?? `{"words": [], "bonus": []}`)
+    }
+
+    json(){
+        return JSON.stringify({"words": Array.from(this.required), "bonus": Array.from(this.bonus)})
+    }
+
+    save(){
+        localStorage.manualSort = this.json()
+    }
+
+    display(){
+        $("#reqWords, #bonusWords").html("")
+        for (let word of this.required){
+            $("#reqWords").append(`<div class="manualSortedWord" data-word="${word}" data-type="required"><span class="word">${word}</span> <span class="cancel">&times;</span></div>`)
+        }
+
+        for (let word of this.bonus){
+            $("#bonusWords").append(`<div class="manualSortedWord" data-word="${word}" data-type="bonus"><span class="word">${word}</span> <span class="cancel">&times;</span></div>`)
+        }
+
+        if (!this.required.size){
+            $("#reqWords").html("There is nothing here.")
+        }
+        if (!this.bonus.size){
+            $("#bonusWords").html("There is nothing here.")
+        }
+
+        $(".manualSortedWord .cancel").click((e)=>{
+            e = $(e.currentTarget)
+            let word = e.parent().data("word")
+            let type = e.parent().data("type")
+
+            if (type === "required"){
+                this.removeRequired(word)
+            }else{
+                this.removeBonus(word)
+            }
+
+            this.display()
+        })
+    }
+}
+
 $(document).on("click", (e)=>{
     if (!$.contains(document.getElementById("squareContextMenu"), e.target) && e.target.id !== "squareContextMenu"){
         $("#squareContextMenu").hide()
@@ -254,6 +336,7 @@ $("#printResults").click(async () => {
 
 $("#word__close").click(() => {
     $("#wordDef").hide()
+    $("#manualCateg").hide()
 })
 
 $("#name_input").keyup((e) => {
@@ -274,8 +357,10 @@ $("#curPuzzle").html("")
 const save = () => {
     let puzzles = JSON.parse(localStorage.puzzles)
     puzzles[Number(localStorage.current)] = game.puzzle.json()
+    Utils.const.manualSort.save()
     localStorage.puzzles = JSON.stringify(puzzles)
     Utils.const.original_data = game.puzzle.json()
+    Utils.const.original_sort = Utils.const.manualSort.json()
 }
 
 
@@ -286,6 +371,9 @@ $('#savePuzzle').click(() => {
 
 window.onbeforeunload = () => {
     if (JSON.stringify(Utils.const.original_data) !== JSON.stringify(game.puzzle.json())) {
+        return () => {}
+    }
+    if (Utils.const.manualSort.json() !== Utils.const.original_sort) {
         return () => {}
     }
 }
@@ -350,29 +438,7 @@ $("#deleteDelete").click(() => {
 })
 
 $("#wordDef > #manualCateg").click(() => {
-    if (!pdata.revReq[popupWord.length]) {
-        pdata.revReq[popupWord.length] = []
-    }
-    if (!pdata.revBonus[popupWord.length]) {
-        pdata.revBonus[popupWord.length] = []
-    }
-    if ($("#wordDef > #manualCateg").html() === "Add to Bonus") {
-        let index = pdata.revBonus[popupWord.length].indexOf(popupData)
-        if (index !== -1) {
-            pdata.revBonus.splice(index, 1)
-        } else {
-            pdata.revReq[popupWord.length].push(popupData)
-        }
-    } else {
-        let index = pdata.revReq[popupWord.length].indexOf(popupData)
-        if (index !== -1) {
-            pdata.revReq.splice(index, 1)
-        } else {
-            pdata.revBonus[popupWord.length].push(popupData)
-        }
-    }
-    $("#wordDef").hide()
-    get_results(data, $("#freq_cutoff").val(), Date.now())
+
 })
 
 function timeout(ms) { // Awesome function
@@ -456,6 +522,23 @@ $("#aboutSite").click(()=>{
     $("#info").show()
 })
 
+$("#wordSort").click(()=>{
+    $("#wordSortModal").show()
+})
+
+$("#manualCateg").click(()=>{
+    let word = $("#manualCateg").data("word")
+    if ($("#manualCateg").html() === "Add to Required"){
+        Utils.const.manualSort.addRequired(word)
+        Utils.const.manualSort.removeBonus(word)
+    }else{
+        Utils.const.manualSort.addBonus(word)
+        Utils.const.manualSort.removeRequired(word)
+    }
+    $("#process").click()
+    $("#wordDef").hide()
+})
+
 const alert = (text) => {
     let el = document.createElement("DIV")
     el.classList.add("alert")
@@ -474,11 +557,12 @@ let game;
 
 window.onload = async () => {
     game = new Game()
+    Utils.const.manualSort = new ManualWordSort()
 
     let information = await fetch("info.html")
     information = await information.text()
     $("#info .modal-content").html(information)
-    
+
     $(".BigModal .close").click((e)=>{
         $(e.currentTarget).parent().parent().parent().hide()
     })

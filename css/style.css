@@ -340,6 +340,9 @@ label[for="name_input"]{
     background-color: rgba(255, 255, 255, 0.3); /* Black w/ opacity */
     color: black;
     animation: fadein ease 0.5s;
+
+    line-height: 24px;
+    font-size: 18px;
 }
 
 /* Modal Content/Box */
@@ -358,7 +361,7 @@ label[for="name_input"]{
 }
 
 .modal-content h1{
-    margin: 0;
+    margin: 20px 0;
 }
 
 #shareEmojis{
@@ -467,17 +470,6 @@ label[for="name_input"]{
     display: none;
 }
 
-#info{
-    animation: none;
-    line-height: 24px;
-    font-size: 18px;
-}
-
-#info h1{
-    margin: 20px 0;
-    display: block;
-}
-
 a{
     color: #2381d9;
     cursor: pointer;
@@ -487,6 +479,33 @@ a{
 a:hover{
     text-decoration: underline;
     filter: brightness(0.8);
+}
+
+.manualSortedWord{
+    background: lightgray;
+    display: inline-block;
+    padding: 10px;
+    border-radius: 4px;
+}
+
+.manualSortedWord .cancel{
+    cursor: pointer;
+    color: black;
+    font-weight: bolder;
+}
+
+.manualSortedWord .cancel:hover{
+    color: red;
+}
+
+#reqWords, #bonusWords{
+    background: whitesmoke;
+    padding: 20px;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    column-gap: 10px;
+    row-gap: 10px;
 }
 
 @keyframes in {

@@ -35,6 +35,7 @@ class Word{
         this.frequency = undefined
         this.awkward = undefined
         this.html = undefined
+        this.bonus = false
     }
 
     add_word(word){
@@ -65,7 +66,8 @@ class Word{
             path: this.path,
             flags: this.flags,
             frequency: this.frequency,
-            awkward: this.awkward
+            awkward: this.awkward,
+            bonus: this.bonus
         }
     }
 }
@@ -75,7 +77,7 @@ class Solver {
         this.puzzle = puzzle
         this.size = puzzle.size
         this.cutoff = cutoff
-        this.result = {"BONUS": []}
+        this.result = {"Bonus": []}
         this.seen = []
         this.analysis = {
             awkward: 0,
@@ -117,8 +119,9 @@ class Solver {
             }
             let obj = Object.assign(Object.create(Object.getPrototypeOf(cur)), cur)
             obj.path = [...cur.path]
-            obj.activate()
             obj.frequency = corpus.freq
+            obj.bonus = (obj.frequency < this.cutoff || Utils.const.manualSort.isBonus(obj.word)) && !Utils.const.manualSort.isRequired(obj.word)
+            obj.activate()
 
             // Analytical stuff
             if (obj.awkward){
@@ -126,8 +129,8 @@ class Solver {
                 this.analysis.awkward_list.push(obj)
             }
 
-            if (obj.frequency < this.cutoff){
-                this.result["BONUS"].push(obj)
+            if (obj.bonus){
+                this.result["Bonus"].push(obj)
             }else{
                 this.result[cur.word.length].push(obj)
             }
@@ -171,7 +174,7 @@ class Solver {
                 }
             })
 
-            element.append(`<h4>${category} ${category === "BONUS" ? "words" : "letters"}</h4><ul></ul>`)
+            element.append(`<h4>${category} ${category === "Bonus" ? "words" : "letters"}</h4><ul></ul>`)
 
             for (let word of word_list) {
                 this.analysis.words += 1
@@ -186,8 +189,10 @@ class Solver {
 
         if (!print){
             $("#results ul li").click((e)=>{
-                Utils.show_word($(e.currentTarget).html())
-                Utils.const.active = $(e.currentTarget).data("word")
+                e = $(e.currentTarget)
+                Utils.show_word(e.html())
+                $("#manualCateg").show().html("Add to " + (e.data("word").bonus ? "Required" : "Bonus")).data("word", e.html())
+                Utils.const.active = e.data("word")
             })
 
             this.display_analysis()
@@ -217,7 +222,10 @@ class Solver {
         }
 
         $("#analysis_awkward_list").css("grid-template-columns", `repeat(auto-fill, minmax(${Math.ceil(width) + 10}px, 1fr))`)
-        $("#analysis_awkward_list li").click((e)=>{Utils.show_word($(e.currentTarget).html())})
+        $("#analysis_awkward_list li").click((e)=>{
+            Utils.show_word($(e.currentTarget).html())
+            $("#manualCateg").show().html("Add to " + ($(e.currentTarget).data("word").bonus ? "Required" : "Bonus")).data("word", $(e.currentTarget).html())
+        })
     }
 
     tally_wps(){

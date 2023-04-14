@@ -23,6 +23,7 @@
     <button id="exportDscd" class="smallbtn"><i class="fa-solid fa-share-from-square"></i></button>
     <button id="printResults" class="smallbtn"><i class="fa-solid fa-print"></i></button>
     <button id="deletePuzzle" class="smallbtn"><i class="fa-solid fa-trash"></i></button>
+    <button id="wordSort" class="smallbtn"><i class="fa-solid fa-file-word"></i></button>
     <button class="smallbtn">|</button>
     <button id="rotateLeft" class="smallbtn"><i class="fa-solid fa-rotate-left"></i></button>
     <button id="rotateRight" class="smallbtn"><i class="fa-solid fa-rotate-right"></i></button>
@@ -43,7 +44,7 @@
 </section>
 <div id="wordDef" class="modal">
     <h2 class="header"><span id="word__def">LOADING</span> <span id="word__close" class="close">&times;</span></h2>
-    <!--<button id="manualCateg" class="smallCoolBtn">Add to Bonus</button>-->
+    <button id="manualCateg" class="smallCoolBtn">Add to &lt;Category&gt;</button>
     <button id="wordPath" class="smallCoolBtn">Show on board</button>
 </div>
 <div id="deletePopup" class="modal">
@@ -104,6 +105,16 @@
 
 <div id="squareContextMenu">
     <button id="squareCtxHide">Hide Square</button>
+</div>
+
+<div id="wordSortModal" class="BigModal">
+    <div class="modal-content">
+        <h1>Manual Word Sort <span class="close">&times;</span></h1>
+        <h1 style="font-size: 24px;">Required Words</h1>
+        <div id="reqWords">Loading...</div>
+        <h1 style="font-size: 24px;">Bonus Words</h1>
+        <div id="bonusWords">Loading...</div>
+    </div>
 </div>
 
 <script src="js/utils.js"></script>
