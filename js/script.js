@@ -277,7 +277,7 @@ class ManualWordSort{
             this.display()
         })
 
-        $(".manualSortedWord").click((e)=>{
+        $(".manualSortedWord:not(.special)").click((e)=>{
             Utils.show_word($(e.currentTarget).data("word"))
         })
     }
