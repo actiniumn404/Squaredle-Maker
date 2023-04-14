@@ -242,12 +242,26 @@ class ManualWordSort{
             $("#bonusWords").append(`<div class="manualSortedWord" data-word="${word}" data-type="bonus"><span class="word">${word}</span> <span class="cancel">&times;</span></div>`)
         }
 
-        if (!this.required.size){
-            $("#reqWords").html("There is nothing here.")
-        }
-        if (!this.bonus.size){
-            $("#bonusWords").html("There is nothing here.")
-        }
+        $("#reqWords").append(`<div class="manualSortedWord special"><i class="fas fa-pencil"></i> Add</div>`)
+        $("#bonusWords").append(`<div class="manualSortedWord special"><i class="fas fa-pencil"></i> Add</div>`)
+
+        $("#reqWords .special").click(()=>{
+            let word = prompt("What word would you like to add?")
+            if (!word){
+                return;
+            }
+            this.removeBonus(word)
+            this.addRequired(word)
+        })
+
+        $("#bonusWords .special").click(()=>{
+            let word = prompt("What word would you like to add?")
+            if (!word){
+                return;
+            }
+            this.removeRequired(word)
+            this.addBonus(word)
+        })
 
         $(".manualSortedWord .cancel").click((e)=>{
             e = $(e.currentTarget)
@@ -261,6 +275,10 @@ class ManualWordSort{
             }
 
             this.display()
+        })
+
+        $(".manualSortedWord").click((e)=>{
+            Utils.show_word($(e.currentTarget).data("word"))
         })
     }
 }
@@ -336,7 +354,6 @@ $("#printResults").click(async () => {
 
 $("#word__close").click(() => {
     $("#wordDef").hide()
-    $("#manualCateg").hide()
 })
 
 $("#name_input").keyup((e) => {
@@ -437,10 +454,6 @@ $("#deleteDelete").click(() => {
     location.href = "index.html"
 })
 
-$("#wordDef > #manualCateg").click(() => {
-
-})
-
 function timeout(ms) { // Awesome function
     return new Promise(resolve => setTimeout(resolve, ms));
 }
@@ -526,17 +539,16 @@ $("#wordSort").click(()=>{
     $("#wordSortModal").show()
 })
 
-$("#manualCateg").click(()=>{
-    let word = $("#manualCateg").data("word")
-    if ($("#manualCateg").html() === "Add to Required"){
-        Utils.const.manualSort.addRequired(word)
-        Utils.const.manualSort.removeBonus(word)
-    }else{
-        Utils.const.manualSort.addBonus(word)
-        Utils.const.manualSort.removeRequired(word)
-    }
-    $("#process").click()
-    $("#wordDef").hide()
+$("#addRequired").click(()=>{
+    let word = Utils.const.active.word
+    Utils.const.manualSort.addRequired(word)
+    Utils.const.manualSort.removeBonus(word)
+})
+
+$("#addBonus").click(()=>{
+    let word = Utils.const.active.word
+    Utils.const.manualSort.addBonus(word)
+    Utils.const.manualSort.removeRequired(word)
 })
 
 const alert = (text) => {
