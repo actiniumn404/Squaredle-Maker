@@ -191,7 +191,6 @@ class Solver {
             $("#results ul li").click((e)=>{
                 e = $(e.currentTarget)
                 Utils.show_word(e.html())
-                $("#manualCateg").show().html("Add to " + (e.data("word").bonus ? "Required" : "Bonus")).data("word", e.html())
                 Utils.const.active = e.data("word")
             })
 
@@ -224,7 +223,6 @@ class Solver {
         $("#analysis_awkward_list").css("grid-template-columns", `repeat(auto-fill, minmax(${Math.ceil(width) + 10}px, 1fr))`)
         $("#analysis_awkward_list li").click((e)=>{
             Utils.show_word($(e.currentTarget).html())
-            $("#manualCateg").show().html("Add to " + ($(e.currentTarget).data("word").bonus ? "Required" : "Bonus")).data("word", $(e.currentTarget).html())
         })
     }
 
