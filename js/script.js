@@ -316,7 +316,7 @@ $("#exportDscd").click(() => {
     for (let row of game.puzzle.puzzle){
         for (let col of row){
             if (col.disabled || col.letter === " "){
-                res += ":black_large_square: "
+                res += ":squaredleBlank: "
             }else if (col.letter === "!"){
                 res += ":squaredleBang: "
             }else{
