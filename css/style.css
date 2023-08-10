@@ -52,6 +52,7 @@ main{
     align-items: center;
     width: calc(var(--width) / 2 - 10px);
     row-gap: 20px;
+    transition: 0.5s;
 }
 
 aside {
@@ -61,6 +62,9 @@ aside {
     flex-direction: column;
     row-gap: 30px;
     overflow: auto;
+    left: 100px;
+    top: 165px;
+    transition: 0.02s left;
 }
 
 .square {
@@ -278,28 +282,6 @@ label[for="name_input"]{
     opacity: 0.5
 }
 
-.squareCircle{
-    --s: calc((var(--width) / 2 - 10px) / var(--size) - 20px);
-    display: none;
-    position: absolute;
-    width: var(--s);
-    height: var(--s);
-    border-radius: 100%;
-    opacity: 0.8;
-    animation: 200ms ease popin;
-}
-
-@keyframes popin{
-    0% {
-        width: calc(0.8 * var(--s));
-        height: calc(0.8 * var(--s));
-    }
-    1000% {
-        width: calc(1 * var(--s));
-        height: calc(0.8 * var(--s));
-    }
-}
-
 .selected{
     background: var(--theme);
     color: white;
@@ -501,7 +483,7 @@ a:hover{
     color: red;
 }
 
-#reqWords, #bonusWords{
+#reqWords, #bonusWords, #watchlistWords{
     background: whitesmoke;
     padding: 20px;
     display: flex;
@@ -535,6 +517,101 @@ footer{
 
 footer a{
     color: #5b5b5b;
+}
+
+body.fullscreen main{
+    width: 100% !important;
+}
+
+body.fullscreen aside{
+    position: fixed;
+    background: #42423f;
+    z-index: 5;
+    padding: 20px 20px 20px 30px;
+    left: -500px;
+    top: 115px;
+    width: min(500px, 90vw);
+    border-radius: 0 16px 16px 0;
+    transition: 0.5s;
+    max-height: calc(100vh - 170px);
+    overflow: auto;
+}
+
+body aside::after{
+    content: " ";
+    position: fixed;
+    left: -100px;
+}
+
+body.fullscreen aside::after, body.fullscreen aside::before{
+    content: "»";
+    position: fixed;
+    background: white;
+    color: black;
+    left: 0;
+    top: 115px;
+    padding: 10px 15px;
+    font-size: 48px;
+    font-weight: 900;
+    border-radius: 0 100% 100% 0;
+    line-height: 36px;
+    cursor: pointer;
+    transition: 0.5s;
+}
+
+body.fullscreen aside:hover{
+    left: 0;
+}
+
+body.fullscreen aside::before{
+    opacity: 0;
+    transition-delay: 0.5s;
+}
+
+body.fullscreen aside:hover::after, body.fullscreen aside:hover::before{
+    left: -100px;
+}
+
+.option{
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 10px;
+}
+
+
+.option input{
+    padding: 10px;
+}
+
+.option i{
+    font-size: 14px;
+}
+
+#results h4{
+    cursor: pointer;
+    user-select: none;
+    margin-bottom: 30px;
+}
+
+#results ul{
+    margin-top: 0;
+}
+
+#analysis_wps_content, .analysis_distrib_container {
+    background: #eeeeee;
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    border-radius: 4px;
+    margin-top: 20px;
+}
+
+.wps_header{
+    font-weight: bold;
+}
+
+.analysis_distrib_container squaredle-puzzle {
+    margin-top: 15px;
 }
 
 @keyframes in {

@@ -94,8 +94,7 @@ class Solver {
                 this.seen[i].push(false)
             }
         }
-
-        this.grid = this.puzzle.repr().match(new RegExp(".{" + this.puzzle.size + "}", "g")).map(x => Array.from(x.toLowerCase()))
+        this.grid = this.puzzle.get_puzzle.match(new RegExp(".{" + this.puzzle.size + "}", "g")).map(x => Array.from(x.toLowerCase()))
     }
 
     solve(){
@@ -174,7 +173,10 @@ class Solver {
                 }
             })
 
-            element.append(`<h4>${category} ${category === "Bonus" ? "words" : "letters"}</h4><ul></ul>`)
+            element.append(`<h4 id="results_header_${category}" data-category="${category}">
+                                ${category} ${category === "Bonus" ? "words" : "letters"}
+                            </h4>
+                            <ul id="results__content_${category}"></ul>`)
 
             for (let word of word_list) {
                 this.analysis.words += 1
@@ -184,7 +186,12 @@ class Solver {
 
             $("#results ul:last-of-type li").css("width", "initial")
             $("#results ul:last-of-type").css("grid-template-columns", `repeat(auto-fill, minmax(${Math.ceil(width) + 10}px, 1fr))`)
-            $("#results h4:last-of-type").append(` (${word_list.length} word${word_list.length !== 1 ? 's': ''})`)
+            $("#results h4:last-of-type").append(` (${word_list.length} word${word_list.length !== 1 ? 's': ''}) <i class="fa-solid fa-caret-down"></i>`)
+
+            if (word_list.length >= 100){
+                $("#results h4:last-of-type i").toggleClass("fa-caret-down").toggleClass("fa-caret-right")
+                $("#results ul:last-of-type").toggle()
+            }
         }
 
         if (!print){
@@ -199,12 +206,20 @@ class Solver {
 
             $("#time_numwords").html(`${this.analysis.words} result${this.analysis.words !== 1 ? "s" : ""} in ${((Date.now() - this.start) / 1000).toFixed(2)} seconds`)
         }
+
+        $("#results h4").click((e)=>{
+            let cur = $(e.currentTarget)
+            let caret = $(cur.find("i"))
+
+            caret.toggleClass("fa-caret-down").toggleClass("fa-caret-right")
+            $(`#results__content_${cur.data("category")}`).toggle()
+        })
     }
 
-    display_analysis(){
+    async display_analysis(){
         // Preload
         $(".analysis_content").hide()
-        $(".analysis_invoke").data("open", "no").find("i").removeClass("fa-caret-down").addClass("fa-caret-right")
+        $("#solvingModal > * > .analysis_invoke").data("open", "no").find("i").removeClass("fa-caret-down").addClass("fa-caret-right")
         $("#analysis_awkward_list").html("")
         $("#analysis_words_per_square .info").html("For each square, the top and bottom numbers represent the number of required and bonus words that use said square. Click on a square to see which words use it.")
 
@@ -213,7 +228,7 @@ class Solver {
         this.analysis.awkward_list = Utils.remove_duplicates(this.analysis.awkward_list)
 
         $("#analysis_awkward .num").html(`${this.analysis.awkward_list.length} awkward word${this.analysis.awkward_list.length === 1 ? "" : "s"}`)
-        $("#analysis_awkward .msg").html(this.analysis.awkward_list.length === 0 ? "Congrats!" : "Here are said words:")
+        $("#analysis_awkward .msg").html(this.analysis.awkward_list.length === 0 ? "." : ":")
 
         for (let word of this.analysis.awkward_list){
             $("#analysis_awkward_list").append(word.html)
@@ -224,6 +239,69 @@ class Solver {
         $("#analysis_awkward_list li").click((e)=>{
             Utils.show_word($(e.currentTarget).html())
         })
+
+        await $("#solvingModal :is(#analysis_words_per_square, #analysis_words_distribution) squaredle-puzzle").attr("puzzle", game.puzzle.puzzle).attr("size", game.puzzle.size)
+
+        this.list_bonus = new Set(Utils.const.results.result["Bonus"].map(e=>e.word))
+
+        Array.from($("#solvingModal #analysis_words_per_square squaredle-puzzle").prop("container").children).forEach(e=>{
+            e.style.cursor = "pointer"
+            e.onclick = (e)=>{
+                if (Number(e.currentTarget.style.opacity) === 0.5){
+                    $("#analysis_wps_content").hide()
+                    e.currentTarget.style.opacity = 1
+                    return
+                }
+
+                [...$("#solvingModal #analysis_words_per_square squaredle-puzzle").prop("container").children].map(e=>e.style.opacity=1)
+
+                let x = $(e.currentTarget).data("x")
+                let y = $(e.currentTarget).data("y")
+                e.currentTarget.style.opacity = 0.5
+                $("#analysis_wps_content").show()
+                let results = Utils.const.results.analysis.wps[y+","+x]
+                let is_bonus = results.filter(e=>Utils.const.results.list_bonus.has(e))
+
+                $("#analysis_wps_required").text(results.length - is_bonus.length)
+                $("#analysis_wps_bonus").text(is_bonus.length)
+                $("#analysis_wps_total").text(results.length)
+            }
+        })
+
+        let total_words = this.analysis.words
+        let num_required = this.analysis.words - this.list_bonus.size
+        let num_bonus = this.list_bonus.size
+
+        let required_squares = $("#analysis_distrib_required").prop("container").children
+        let bonus_squares = $("#analysis_distrib_bonus").prop("container").children
+        let total_squares = $("#analysis_distrib_all").prop("container").children
+
+        let max_required = 0
+        let max_bonus = 0
+        let max_total = 0
+
+        //console.log("PRELIM", total_words, num_required, num_bonus)
+        for (let y = 0; y < this.size; y++){
+            for (let x = 0; x < this.size; x++){
+                let results = Utils.const.results.analysis.wps[y + "," + x]
+                let is_bonus = results.filter(e=>this.list_bonus.has(e.word))
+
+                max_required = Math.max(max_required, (results.length - is_bonus.length) / num_required)
+                max_bonus = Math.max(max_bonus, (is_bonus.length) / num_bonus)
+                max_total = Math.max(max_total, (results.length) / total_words)
+
+                required_squares[y * this.size + x].style.opacity = (results.length - is_bonus.length) / num_required
+                bonus_squares[y * this.size + x].style.opacity = (is_bonus.length) / num_bonus
+                total_squares[y * this.size + x].style.opacity = (results.length) / total_words
+            }
+        }
+        for (let y = 0; y < this.size; y++){
+            for (let x = 0; x < this.size; x++){
+                required_squares[y * this.size + x].style.opacity = Number(required_squares[y * this.size + x].style.opacity)/max_required
+                bonus_squares[y * this.size + x].style.opacity = Number(bonus_squares[y * this.size + x].style.opacity)/max_bonus
+                total_squares[y * this.size + x].style.opacity = Number(total_squares[y * this.size + x].style.opacity)/max_total
+            }
+        }
     }
 
     tally_wps(){

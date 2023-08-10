@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.0/css/all.min.css">
     <link rel="icon" href="assets/logo.svg">
 
+    <script type="module" src="./js/components.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 </head>
 <body>
@@ -23,80 +24,23 @@
         </div>
         <div id="choose__options">
             <div class="choose__option" id="addSquare">
-                <table class="puzzle">
-                    <tr>
-                        <td class="square" style="--size:4;"></td>
-                        <td class="square" style="--size:4;"></td>
-                        <td class="square" style="--size:4;"></td>
-                        <td class="square" style="--size:4;"></td>
-                    </tr>
-                    <tr>
-                        <td class="square" style="--size:4;"></td>
-                        <td class="square" style="--size:4;"></td>
-                        <td class="square" style="--size:4;"></td>
-                        <td class="square" style="--size:4;"></td>
-                    </tr>
-                    <tr>
-                        <td class="square" style="--size:4;"></td>
-                        <td class="square" style="--size:4;"></td>
-                        <td class="square" style="--size:4;"></td>
-                        <td class="square" style="--size:4;"></td>
-                    </tr>
-                    <tr>
-                        <td class="square" style="--size:4;"></td>
-                        <td class="square" style="--size:4;"></td>
-                        <td class="square" style="--size:4;"></td>
-                        <td class="square" style="--size:4;"></td>
-                    </tr>
-                </table>
+                <div class="puzzle">
+                    <squaredle-puzzle size="4" puzzle="                " style="width: 70%;" read_only>Loading...</squaredle-puzzle>
+                </div>
                 <div class="choose__option__label">Square</div>
                 <div class="choose__option__caption">This is Squaredle, not Circle. (You can also change the size)</div>
             </div>
             <div class="choose__option" id="addWaffle">
-                <table class="puzzle">
-                    <tr>
-                        <td class="square" style="--size:5;"></td>
-                        <td class="square" style="--size:5;"></td>
-                        <td class="square" style="--size:5;"></td>
-                        <td class="square" style="--size:5;"></td>
-                        <td class="square" style="--size:5;"></td>
-                    </tr>
-                    <tr>
-                        <td class="square" style="--size:5;"></td>
-                        <td class="square hide" style="--size:5;"></td>
-                        <td class="square" style="--size:5;"></td>
-                        <td class="square hide" style="--size:5;"></td>
-                        <td class="square" style="--size:5;"></td>
-                    </tr>
-                    <tr>
-                        <td class="square" style="--size:5;"></td>
-                        <td class="square" style="--size:5;"></td>
-                        <td class="square" style="--size:5;"></td>
-                        <td class="square" style="--size:5;"></td>
-                        <td class="square" style="--size:5;"></td>
-                    </tr>
-                    <tr>
-                        <td class="square" style="--size:5;"></td>
-                        <td class="square hide" style="--size:5;"></td>
-                        <td class="square" style="--size:5;"></td>
-                        <td class="square hide" style="--size:5;"></td>
-                        <td class="square" style="--size:5;"></td>
-                    </tr>
-                    <tr>
-                        <td class="square" style="--size:5;"></td>
-                        <td class="square" style="--size:5;"></td>
-                        <td class="square" style="--size:5;"></td>
-                        <td class="square" style="--size:5;"></td>
-                        <td class="square" style="--size:5;"></td>
-                    </tr>
-                </table>
+                <div class="puzzle">
+                    <squaredle-puzzle size="5" puzzle="      &#9; &#9;       &#9; &#9;      " style="width: 70%;" read_only>Loading...</squaredle-puzzle>
+                </div>
                 <div class="choose__option__label">Waffle</div>
                 <div class="choose__option__caption">Delicious #wafflegame coming right up!</div>
             </div>
             <div class="choose__option" id="add10x10">
-                <table class="template">
-                    <table class="puzzle" id="10x10"></table>
-                </table>
+                <div class="puzzle">
+                    <squaredle-puzzle size="10" puzzle="                                                                                                    " style="width: 70%;" read_only>Loading...</squaredle-puzzle>
+                </div>
                 <div class="choose__option__label">10x10</div>
                 <div class="choose__option__caption">You're not going to do this, right?</div>
             </div>

@@ -20,10 +20,12 @@ const loadPuzzles = ()=>{
     let count = 0
     for (let puzzle of puzzles){
         $("#recent__wrapper").append(`<a class="myPuzzle" href="puzzle.html?puzzle=${count}">
-            <table class="puzzle" id="myPuzzle${count}"></table>
+            <div class="puzzle" id="myPuzzle${count}">
+                <squaredle-puzzle size="${puzzle.size}" puzzle="${puzzle.puzzle.replaceAll("\0", "\x09")}" style="width: 100%;" read_only>Loading...</squaredle-puzzle>
+            </div>
             <div class="myPuzzle__name">${puzzle.name}</div>
         </a>`)
-        fill("#myPuzzle"+count, Number(puzzle.size), puzzle.puzzle, Number(puzzle.size) + 1)
+        //fill("#myPuzzle"+count, Number(puzzle.size), puzzle.puzzle, Number(puzzle.size) + 1)
         count++
     }
 }
@@ -44,10 +46,9 @@ $("#aboutSite").click(()=>{
     $("#info").show()
 })
 
-window.onload = async () => {
-    fill("#10x10", 10, "", letters=7)
-    loadPuzzles()
+loadPuzzles()
 
+window.onload = async () => {
     let information = await fetch("info.html")
     information = await information.text()
     $("#info .modal-content").html(information)
@@ -55,4 +56,8 @@ window.onload = async () => {
     $(".BigModal .close").click((e)=>{
         $(e.currentTarget).parent().parent().parent().hide()
     })
+
+    for (let c of document.querySelectorAll("squaredle-puzzle")){
+        c.request_resize()
+    }
 }
