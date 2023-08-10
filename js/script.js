@@ -405,12 +405,12 @@ $('#savePuzzle').click(() => {
 })
 
 window.onbeforeunload = () => {
-    if (JSON.stringify(Utils.const.original_data) !== JSON.stringify(game.puzzle.json)) {
+    /*if (JSON.stringify(Utils.const.original_data) !== JSON.stringify(game.puzzle.json)) {
         return () => {}
     }
     if (Utils.const.manualSort.json() !== Utils.const.original_sort) {
         return () => {}
-    }
+    }*/
 }
 
 document.onkeydown = (e) => {
@@ -501,8 +501,9 @@ $("#changeSettings").click(()=>{$("#settingsModal").show()})
 
 $("#squareCtxHide").click(()=>{
     $("#squareContextMenu").hide()
-    game.puzzle.puzzle[Utils.const.active[0]][Utils.const.active[1]].disabled = !game.puzzle.puzzle[Utils.const.active[0]][Utils.const.active[1]].disabled
-    game.puzzle.load($("#puzzle"))
+    let active_element = game.puzzle.container.children[Utils.const.active[1] * game.puzzle.size + Utils.const.active[0]]
+    active_element.setAttribute("disabled", !active_element.disabled ? "true" : "false")
+    active_element.handle_change()
 })
 
 $("#settings__size").on("input", ()=>{

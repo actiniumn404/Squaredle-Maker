@@ -27,7 +27,7 @@ class Puzzle extends LitElement {
     }
 
     get get_puzzle(){
-        return Array.from(this.container.children).map(e=>e.content).join("").replaceAll("\t", "\0")
+        return Array.from(this.container.children).map(e=>!e.disabled ? e.content : "\0").join("").replaceAll("\t", "\0")
     }
 
     static get styles() {
@@ -47,7 +47,7 @@ class Puzzle extends LitElement {
                 aspect-ratio: 1;
             }
             
-            squaredle-square[disabled]{
+            squaredle-square[disabled="true"]{
                 opacity: 0.1;
             }
         `
@@ -56,7 +56,7 @@ class Puzzle extends LitElement {
     render() {
         return html`
             <div id="puzzle" style="grid-template-columns: ${"1fr ".repeat(this.size)}">
-                ${[...this.puzzle].map((e, i)=>{return html`<squaredle-square content="${e}" style="width:100%;" ?read_only=${this.read_only} ?disabled=${e==="\x09"} data-x=${i % this.size} data-y=${Math.floor(i / this.size)}></squaredle-square>`})}
+                ${[...this.puzzle].map((e, i)=>{return html`<squaredle-square content="${e}" style="width:100%;" ?read_only=${this.read_only} disabled=${e==="\x09" ? "true" : "false"} data-x=${i % this.size} data-y=${Math.floor(i / this.size)}></squaredle-square>`})}
             </div>
         `
     }
@@ -230,12 +230,27 @@ class PuzzleSquare extends LitElement{
     update_font(){
         this.input.style.fontSize = 0.5 * this.offsetHeight + "px"
     }
+
     render(){
-        return html`<div id="container"><div class="squareCircle"></div><input maxlength="1" value=${this.content.trim()} ?disabled=${this.read_only} @change=${this._handle_change} @keyup=${this._handle_change}></div>`
+        this.disabled = this.getAttribute("disabled") === "true"
+        this.oncontextmenu = (e)=>{this._handle_contextmenu(e)}
+        return html`<div id="container" disabled=${this.disabled ? "true" : "false"}><div class="squareCircle"></div><input maxlength="1" value=${this.content.trim()} ?disabled=${this.read_only} @change=${this.handle_change} @keyup=${this.handle_change}></div>`
     }
 
-    _handle_change(e){
+    handle_change(e){
         this.content = this.input.value
+        this.disabled = this.getAttribute("disabled") === "true"
+    }
+
+    _handle_contextmenu(e){
+        Utils.const.active = [Number(this.getAttribute("data-x")), Number(this.getAttribute("data-y"))]
+        e.preventDefault()
+        $("#squareContextMenu").css({
+            left: e.pageX,
+            top: e.pageY
+        }).show()
+
+        $("#squareCtxHide").html(`${this.disabled ? "Show" : "Hide"} Square`)
     }
 }
 
