@@ -260,6 +260,12 @@ class Solver {
                 e.currentTarget.style.opacity = 0.5
                 $("#analysis_wps_content").show()
                 let results = Utils.const.results.analysis.wps[y+","+x]
+                if (!results){
+                    $("#analysis_wps_required").text("N/A (This square is disabled)")
+                    $("#analysis_wps_bonus").text("N/A (This square is disabled)")
+                    $("#analysis_wps_total").text("N/A (This square is disabled)")
+                    return
+                }
                 let is_bonus = results.filter(e=>Utils.const.results.list_bonus.has(e))
 
                 $("#analysis_wps_required").text(results.length - is_bonus.length)
@@ -284,6 +290,12 @@ class Solver {
         for (let y = 0; y < this.size; y++){
             for (let x = 0; x < this.size; x++){
                 let results = Utils.const.results.analysis.wps[y + "," + x]
+                if (!results){
+                    required_squares[y * this.size + x].style.opacity = 0
+                    bonus_squares[y * this.size + x].style.opacity = 0
+                    total_squares[y * this.size + x].style.opacity = 0
+                    continue;
+                }
                 let is_bonus = results.filter(e=>this.list_bonus.has(e.word))
 
                 max_required = Math.max(max_required, (results.length - is_bonus.length) / num_required)
