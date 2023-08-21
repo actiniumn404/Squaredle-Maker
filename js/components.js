@@ -27,7 +27,7 @@ class Puzzle extends LitElement {
     }
 
     get get_puzzle(){
-        return Array.from(this.container.children).map(e=>!e.disabled ? e.content : "\0").join("").replaceAll("\t", "\0")
+        return Array.from(this.container.children).map(e=>!e.disabled ? e.content || " " : "\0").join("").replaceAll("\t", "\0")
     }
 
     static get styles() {
