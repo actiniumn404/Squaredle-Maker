@@ -614,6 +614,91 @@ body.fullscreen aside:hover::after, body.fullscreen aside:hover::before{
     margin-top: 15px;
 }
 
+/*#actionbar > *{
+    container-type: inline-size;
+    container-name: navbar_button;
+}
+
+#actionbar > * > i{
+    display: inline-block;
+    padding: 0 6px;
+    transition: 0.2s;
+}
+
+#actionbar > * > i:hover{
+    opacity: 0.8;
+}
+
+@container navbar_button (min-width: 0px) {
+    body{
+        background: red !important;
+    }
+    #actionbar *:hover::after{
+        content: attr(description);
+        position: absolute;
+        transform: translate(calc(-100cqw), 30px);
+        background: black;
+        padding: 10px;
+        color: white;
+        font-size: 14px;
+        font-weight: bold;
+        border-radius: 8px;
+    }
+}*/
+
+#actionbar > *{
+    position: relative;
+}
+
+#actionbar > *:not(.notitle)::after{
+    position: absolute;
+    left: 0;
+    top: 100%;
+    background: white;
+    padding: 10px;
+    color: black;
+    font-size: 14px;
+    font-weight: bold;
+    border-radius: 8px;
+    text-align: left;
+
+    display: none;
+    content: attr(description);
+    animation: hide_title 0.2s ease;
+    animation-fill-mode: forwards;
+}
+
+#actionbar > *:hover:not(.notitle)::after{
+    display: block;
+    content: attr(description);
+    animation: reveal_title 0.2s ease;
+    animation-fill-mode: forwards;
+}
+
+
+@keyframes reveal_title{
+    from{
+        top: 120%;
+        opacity: 0;
+    }
+    to{
+        top: 100%;
+        opacity: 1;
+    }
+}
+
+@keyframes hide_title{
+    from{
+        top: 100%;
+        opacity: 1;
+        display: block;
+    }
+    to{
+        top: 120%;
+        opacity: 0;
+    }
+}
+
 @keyframes in {
     0% {
         position: relative;

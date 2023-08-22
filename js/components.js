@@ -27,6 +27,9 @@ class Puzzle extends LitElement {
     }
 
     get get_puzzle(){
+        if (!this.container){
+            return
+        }
         return Array.from(this.container.children).map(e=>!e.disabled ? e.content || " " : "\0").join("").replaceAll("\t", "\0")
     }
 
@@ -56,7 +59,7 @@ class Puzzle extends LitElement {
     render() {
         return html`
             <div id="puzzle" style="grid-template-columns: ${"1fr ".repeat(this.size)}">
-                ${[...this.puzzle].map((e, i)=>{return html`<squaredle-square content="${e}" style="width:100%;" ?read_only=${this.read_only} disabled=${e==="\x09" ? "true" : "false"} data-x=${i % this.size} data-y=${Math.floor(i / this.size)}></squaredle-square>`})}
+                ${[...(this.puzzle)].map((e, i)=>{return html`<squaredle-square content="${e}" style="width:100%;" ?read_only=${this.read_only} disabled=${e==="\x09" || e==="\0" ? "true" : "false"} data-x=${i % this.size} data-y=${Math.floor(i / this.size)}></squaredle-square>`})}
             </div>
         `
     }
@@ -121,6 +124,7 @@ class Puzzle extends LitElement {
 
         document.getElementById("puzzle").style.transition = "none"
         document.getElementById("puzzle").style.transform = "none"
+
 
         this.puzzle = this.puzzle_array.map((val, index) => this.puzzle_array.map(row => row[row.length-1-index]).join("")).join("")
 
