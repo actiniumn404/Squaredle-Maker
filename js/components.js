@@ -27,6 +27,9 @@ class Puzzle extends LitElement {
     }
 
     get get_puzzle(){
+        if (!this.container){
+            return
+        }
         return Array.from(this.container.children).map(e=>!e.disabled ? e.content || " " : "\0").join("").replaceAll("\t", "\0")
     }
 
