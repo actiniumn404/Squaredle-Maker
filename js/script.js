@@ -13,6 +13,7 @@ class Game{
                 let puzzle_raw = this.misc.puzzles[Number(this.url.get("puzzle"))]
                 $("#name_input").val(puzzle_raw.name)
                 $("#settings__size").val(Number(puzzle_raw.size))
+                puzzle_raw.puzzle += new Array(puzzle_raw.size**2 - puzzle_raw.puzzle.length).fill(" ").join("")
                 this.puzzle = document.getElementById("puzzle")
                 this.puzzle.size = puzzle_raw.size
                 this.puzzle.puzzle = puzzle_raw.puzzle.replaceAll("\0", "\x09")
