@@ -18,8 +18,6 @@ const Utils = {
             name: name,
             puzzle: puzzle,
             size: size,
-            revBonus: {},
-            revReq: {},
         })
         localStorage.puzzles = JSON.stringify(puzzles)
         return puzzles.length - 1
