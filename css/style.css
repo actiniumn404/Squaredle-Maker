@@ -611,6 +611,13 @@ body.fullscreen aside:hover::after, body.fullscreen aside:hover::before{
     justify-content: space-between;
 }
 
+#analysis_wps_content{
+    flex-direction: column;
+    color: black;
+    justify-content: flex-start;
+    align-items: flex-start;
+}
+
 .wps_header{
     font-weight: bold;
 }
