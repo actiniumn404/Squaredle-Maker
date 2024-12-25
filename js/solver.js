@@ -289,6 +289,8 @@ class Solver {
             $("#analysis_wps_total").text(results.length)
         }
 
+        $("#solvingModal").css("display", "flex")
+
         await timeout(200);
 
         Array.from($("#analysis_words_per_square squaredle-puzzle").prop("container").children).forEach(e=>{
@@ -301,13 +303,12 @@ class Solver {
             box.style.pointerEvents = "none"
         })
 
+
         let total_words = this.analysis.words
         let num_required = this.analysis.words - this.list_bonus.size
         let num_bonus = this.list_bonus.size
 
-        let required_squares = $("#analysis_distrib_required").prop("container").children
-        let bonus_squares = $("#analysis_distrib_bonus").prop("container").children
-        let total_squares = $("#analysis_distrib_all").prop("container").children
+        let squares = Array.from($("#puzzle").prop("container").children).map(e=>$(e))
 
         let max_required = 0
         let max_bonus = 0
@@ -318,9 +319,9 @@ class Solver {
             for (let x = 0; x < this.size; x++){
                 let results = Utils.const.results.analysis.wps[y + "," + x]
                 if (!results){
-                    required_squares[y * this.size + x].style.opacity = 0
-                    bonus_squares[y * this.size + x].style.opacity = 0
-                    total_squares[y * this.size + x].style.opacity = 0
+                    squares[y * this.size + x].css("--required", 0)
+                    squares[y * this.size + x].css("--bonus", 0)
+                    squares[y * this.size + x].css("--all", 0)
                     continue;
                 }
                 let is_bonus = results.filter(e=>this.list_bonus.has(e.word))
@@ -329,18 +330,34 @@ class Solver {
                 max_bonus = Math.max(max_bonus, (is_bonus.length) / num_bonus)
                 max_total = Math.max(max_total, (results.length) / total_words)
 
-                required_squares[y * this.size + x].style.opacity = (results.length - is_bonus.length) / num_required
-                bonus_squares[y * this.size + x].style.opacity = (is_bonus.length) / num_bonus
-                total_squares[y * this.size + x].style.opacity = (results.length) / total_words
+
+                squares[y * this.size + x].css("--required", (results.length - is_bonus.length) / num_required)
+                squares[y * this.size + x].css("--bonus", (is_bonus.length) / num_bonus)
+                squares[y * this.size + x].css("--all", (results.length) / total_words)
             }
         }
         for (let y = 0; y < this.size; y++){
             for (let x = 0; x < this.size; x++){
-                required_squares[y * this.size + x].style.opacity = Number(required_squares[y * this.size + x].style.opacity)/max_required
-                bonus_squares[y * this.size + x].style.opacity = Number(bonus_squares[y * this.size + x].style.opacity)/max_bonus
-                total_squares[y * this.size + x].style.opacity = Number(total_squares[y * this.size + x].style.opacity)/max_total
+                squares[y * this.size + x].css("--required", Number(squares[y * this.size + x].css("--required"))/max_required)
+                squares[y * this.size + x].css("--bonus", Number(squares[y * this.size + x].css("--bonus"))/max_bonus)
+                squares[y * this.size + x].css("--all", Number(squares[y * this.size + x].css("--all"))/max_total)
             }
         }
+
+        $(".analysis_distrib_container input").change((e) => {
+            let element = e.currentTarget
+            let cls = element.classList[0]
+
+            console.log(cls)
+
+            $(`.analysis_distrib_container input:not(.${cls})`).prop("checked", false)
+
+            $($("#puzzle").prop("container")).removeClass("required bonus all")
+
+            if ($(element).is(":checked")){
+                $($("#puzzle").prop("container")).addClass(cls)
+            }
+        })
     }
 
     tally_wps(){

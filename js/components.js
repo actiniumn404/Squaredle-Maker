@@ -53,6 +53,23 @@ class Puzzle extends LitElement {
             squaredle-square[disabled="true"]{
                 opacity: 0.1;
             }
+          
+            #puzzle:is(.required, .bonus, .all){
+                background: white;
+                border-radius: 5px;
+            }
+          
+            #puzzle.required squaredle-square{
+                opacity: var(--required);
+            }
+          
+            #puzzle.bonus squaredle-square{
+                opacity: var(--bonus);
+            }
+          
+            #puzzle.all squaredle-square{
+                opacity: var(--all);
+            }
         `
     }
 

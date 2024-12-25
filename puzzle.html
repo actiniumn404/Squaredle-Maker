@@ -45,41 +45,43 @@
                 <span class="desc">Your Puzzle has X awkward works!</span>
             </div>
         </span>
-        <span id="results__analysis">Read Full Analysis</span>
+        <!--<span id="results__analysis">Read Full Analysis</span>-->
 
-        <span class="analysis_invoke" data-invoke="#analysis_awkward" data-open="no">Awkward Words <i class="fa-solid fa-caret-right"></i></span>
-        <div id="analysis_awkward" class="analysis_content">
-            I found <span class="num">0 awkward words</span> in your puzzle<span class="msg"></span>
-            <ul id="analysis_awkward_list"></ul>
-        </div>
-        <span class="analysis_invoke" data-invoke="#analysis_words_per_square" data-open="no">Words Per Square <i class="fa-solid fa-caret-right"></i></span>
-        <div id="analysis_words_per_square" class="analysis_content">
-            Click on a square to get analytics about it
-            <squaredle-puzzle id="analysis_wps_puzzle" size="0" puzzle="" style="display:block;width: min(50%, 300px);" read_only>Loading puzzle...</squaredle-puzzle>
-            <div id="analysis_wps_content" style="display: none;">
-                <div><span class="wps_header">Number of "required" words:</span> <span id="analysis_wps_required">-1</span></div>
-                <div><span class="wps_header">Number of "bonus" words:</span> <span id="analysis_wps_bonus">-1</span></div>
-                <div><span class="wps_header">Total words:</span> <span id="analysis_wps_total">-1</span></div>
-                <div id="wps_results"></div>
+        <div id="solvingModal">
+            <span class="analysis_invoke" data-invoke="#analysis_awkward" data-open="no">Awkward Words <i class="fa-solid fa-caret-right"></i></span>
+            <div id="analysis_awkward" class="analysis_content">
+                I found <span class="num">0 awkward words</span> in your puzzle<span class="msg"></span>
+                <ul id="analysis_awkward_list"></ul>
             </div>
-        </div>
-        <span class="analysis_invoke" data-invoke="#analysis_words_distribution" data-open="no">Word Distribution <i class="fa-solid fa-caret-right"></i></span>
-        <div id="analysis_words_distribution" class="analysis_content">
-            The lighter the square, the fewer words use it. Use the <b onclick="$(`.analysis_invoke[data-invoke='#analysis_words_per_square']`).click()" style="cursor: pointer">Words Per Square</b>
-            tool to get more specific results.
+            <span class="analysis_invoke" data-invoke="#analysis_words_per_square" data-open="no">Words Per Square <i class="fa-solid fa-caret-right"></i></span>
+            <div id="analysis_words_per_square" class="analysis_content">
+                Click on a square to get analytics about it
+                <squaredle-puzzle id="analysis_wps_puzzle" size="0" puzzle="" style="display:block;width: min(50%, 300px);" read_only>Loading puzzle...</squaredle-puzzle>
+                <div id="analysis_wps_content" style="display: none;">
+                    <div><span class="wps_header">Number of "required" words:</span> <span id="analysis_wps_required">-1</span></div>
+                    <div><span class="wps_header">Number of "bonus" words:</span> <span id="analysis_wps_bonus">-1</span></div>
+                    <div><span class="wps_header">Total words:</span> <span id="analysis_wps_total">-1</span></div>
+                    <div id="wps_results"></div>
+                </div>
+            </div>
+            <span class="analysis_invoke" data-invoke="#analysis_words_distribution" data-open="no">Word Distribution <i class="fa-solid fa-caret-right"></i></span>
+            <div id="analysis_words_distribution" class="analysis_content">
+                The lighter the square, the fewer words use it. Use the <b onclick="$(`.analysis_invoke[data-invoke='#analysis_words_per_square']`).click()" style="cursor: pointer">Words Per Square</b>
+                tool to get more specific results.
 
-            <div class="analysis_distrib_container">
-                <b class="analysis_invoke" data-invoke="#analysis_distrib_required" data-open="yes">Required Words <i class="fa-solid fa-caret-down"></i></b>
-                <squaredle-puzzle id="analysis_distrib_required" size="0" puzzle="" style="display:block;width: min(50%, 300px)" read_only>Loading puzzle...</squaredle-puzzle>
-            </div>
+                <div class="analysis_distrib_container">
+                    <b>Required Words</b>
+                    <label class="switch"><input type="checkbox" class="required"><span class="slider round"></span></label>
+                </div>
 
-            <div class="analysis_distrib_container">
-                <b class="analysis_invoke" data-invoke="#analysis_distrib_bonus" data-open="yes">Bonus Words <i class="fa-solid fa-caret-down"></i></b>
-                <squaredle-puzzle id="analysis_distrib_bonus" size="0" puzzle="" style="display:block;width: min(50%, 300px)" read_only>Loading puzzle...</squaredle-puzzle>
-            </div>
-            <div class="analysis_distrib_container">
-                <b class="analysis_invoke" data-invoke="#analysis_distrib_all" data-open="yes">All Words <i class="fa-solid fa-caret-down"></i></b>
-                <squaredle-puzzle id="analysis_distrib_all" size="0" puzzle="" style="display:block;width: min(50%, 300px)" read_only>Loading puzzle...</squaredle-puzzle>
+                <div class="analysis_distrib_container">
+                    <b>Bonus Words</b>
+                    <label class="switch"><input type="checkbox" class="bonus"><span class="slider round"></span></label>
+                </div>
+                <div class="analysis_distrib_container">
+                    <b>All Words</b>
+                    <label class="switch"><input type="checkbox" class="all"><span class="slider round"></span></label>
+                </div>
             </div>
         </div>
 
