@@ -86,6 +86,7 @@ class Solver {
             wps: {} // words per square
         }
         this.start = 0
+        this.bonus_count = 0
         this.letters = new Set("abcdefghijklmnopqrstuvwxyz")
 
         for (let i = 0; i < this.size; i++) {
@@ -157,6 +158,8 @@ class Solver {
         element = $(element)
         element.html("")
 
+        this.bonus_count = 0
+
         for (let category in this.result) {
             let width = 70
             let word_list = Utils.remove_duplicates(this.result[category])
@@ -182,6 +185,10 @@ class Solver {
                 this.analysis.words += 1
                 $("#results ul:last-of-type").append(word.html)
                 width = Math.max(width, $("#results ul:last-of-type li:last-of-type").width())
+
+                if (category === "Bonus"){
+                    this.bonus_count += 1;
+                }
             }
 
             $("#results ul:last-of-type li").css("width", "initial")
@@ -204,7 +211,15 @@ class Solver {
             this.display_analysis()
             this.tally_wps()
 
-            $("#time_numwords").html(`${this.analysis.words} result${this.analysis.words !== 1 ? "s" : ""} in ${((Date.now() - this.start) / 1000).toFixed(2)} seconds`)
+            $("#time_numwords").html(`${this.analysis.words} result${this.analysis.words !== 1 ? "s" : ""}
+            in ${((Date.now() - this.start) / 1000).toFixed(2)} seconds<br> (${this.analysis.words - this.bonus_count} Required and ${this.bonus_count} Bonus)`)
+
+            if (this.analysis.awkward_list.length){
+                $("#warnings").css("display", "flex")
+                $("#warnings .desc").html(`Your puzzle has ${this.analysis.awkward_list.length} awkward word${this.analysis.awkward_list.length === 1 ? "" : "s"}!`)
+            }else{
+                $("#warnings").hide()
+            }
         }
 
         $("#results h4").click((e)=>{
@@ -219,7 +234,7 @@ class Solver {
     async display_analysis(){
         // Preload
         $(".analysis_content").hide()
-        $("#solvingModal > * > .analysis_invoke").data("open", "no").find("i").removeClass("fa-caret-down").addClass("fa-caret-right")
+        $(".analysis_invoke").data("open", "no").find("i").removeClass("fa-caret-down").addClass("fa-caret-right")
         $("#analysis_awkward_list").html("")
         $("#analysis_words_per_square .info").html("For each square, the top and bottom numbers represent the number of required and bonus words that use said square. Click on a square to see which words use it.")
 
@@ -240,38 +255,50 @@ class Solver {
             Utils.show_word($(e.currentTarget).html())
         })
 
-        await $("#solvingModal :is(#analysis_words_per_square, #analysis_words_distribution) squaredle-puzzle").attr("puzzle", game.puzzle.puzzle).attr("size", game.puzzle.size)
+        await $(":is(#analysis_words_per_square, #analysis_words_distribution) squaredle-puzzle").attr("puzzle", game.puzzle.puzzle).attr("size", game.puzzle.size)
 
         this.list_bonus = new Set(Utils.const.results.result["Bonus"].map(e=>e.word))
 
-        Array.from($("#solvingModal #analysis_words_per_square squaredle-puzzle").prop("container").children).forEach(e=>{
-            e.style.cursor = "pointer"
-            e.onclick = (e)=>{
-                if (Number(e.currentTarget.style.opacity) === 0.5){
-                    $("#analysis_wps_content").hide()
-                    e.currentTarget.style.opacity = 1
-                    return
-                }
-
-                [...$("#solvingModal #analysis_words_per_square squaredle-puzzle").prop("container").children].map(e=>e.style.opacity=1)
-
-                let x = $(e.currentTarget).data("x")
-                let y = $(e.currentTarget).data("y")
-                e.currentTarget.style.opacity = 0.5
-                $("#analysis_wps_content").show()
-                let results = Utils.const.results.analysis.wps[y+","+x]
-                if (!results){
-                    $("#analysis_wps_required").text("N/A (This square is disabled)")
-                    $("#analysis_wps_bonus").text("N/A (This square is disabled)")
-                    $("#analysis_wps_total").text("N/A (This square is disabled)")
-                    return
-                }
-                let is_bonus = results.filter(e=>Utils.const.results.list_bonus.has(e))
-
-                $("#analysis_wps_required").text(results.length - is_bonus.length)
-                $("#analysis_wps_bonus").text(is_bonus.length)
-                $("#analysis_wps_total").text(results.length)
+        let display_stats = (element) => {
+            if (Number(element.style.opacity) === 0.5){
+                $("#analysis_wps_content").hide()
+                element.style.opacity = 1
+                return
             }
+
+            let x = $(element).data("x")
+            let y = $(element).data("y")
+            let results = Utils.const.results.analysis.wps[y+","+x]
+            if (!results){
+                $("#analysis_wps_required").text("N/A (This square is disabled)")
+                $("#analysis_wps_bonus").text("N/A (This square is disabled)")
+                $("#analysis_wps_total").text("N/A (This square is disabled)")
+                return
+            }
+
+            [...$("#analysis_words_per_square squaredle-puzzle").prop("container").children].map(e=>{if (!e.disabled){e.style.opacity=1}})
+
+            element.style.opacity = 0.5
+            $("#analysis_wps_content").show()
+
+
+            let is_bonus = results.filter(e=>Utils.const.results.list_bonus.has(e.word))
+
+            $("#analysis_wps_required").text(results.length - is_bonus.length)
+            $("#analysis_wps_bonus").text(is_bonus.length)
+            $("#analysis_wps_total").text(results.length)
+        }
+
+        await timeout(200);
+
+        Array.from($("#analysis_words_per_square squaredle-puzzle").prop("container").children).forEach(e=>{
+            e.style.cursor = "pointer"
+            e.onclick = (a)=>{
+                display_stats(a.currentTarget)
+            }
+
+            let box = e.container.querySelector("input")
+            box.style.pointerEvents = "none"
         })
 
         let total_words = this.analysis.words

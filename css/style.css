@@ -675,6 +675,35 @@ body.fullscreen aside:hover::after, body.fullscreen aside:hover::before{
     animation-fill-mode: forwards;
 }
 
+#warnings{
+    background: mediumpurple;
+    margin-right: 30px;
+    padding: 10px;
+    border-radius: 4px;
+    /*display: flex;*/
+    align-items: center;
+    column-gap: 10px;
+    display: none;
+}
+
+#warnings .left{
+    font-size: 24px;
+    color: white;
+}
+
+#warnings .right{
+    font-size: 14px;
+    display: flex;
+    flex-direction: column;
+}
+
+#warnings .title{
+    font-size: 18px;
+    font-weight: 900;
+}
+
+
+
 
 @keyframes reveal_title{
     from{
