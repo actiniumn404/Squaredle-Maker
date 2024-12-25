@@ -46,6 +46,30 @@ $("#aboutSite").click(()=>{
     $("#info").show()
 })
 
+$("#backup").click(() => {
+    let json = {
+        puzzles: JSON.parse(localStorage.puzzles ?? {}),
+        manualSort: JSON.parse(localStorage.manualSort ?? {})
+    }
+
+    let format = JSON.stringify(json)
+
+    console.log(format)
+
+    $("#backup_textarea").val(format)
+
+    $("#backup_download").attr("download", `Squaredle_Maker_Backup_
+    ${new Intl.DateTimeFormat('en-US', {
+    "hour": "numeric",
+    "minute": "numeric",
+    "day": "numeric",
+    "year": "numeric",
+    "month": "long"
+  }).format(new Date()).replaceAll(" ", "_").replaceAll(",","").replaceAll(":", "")}.json
+    `).attr("href", "data:text/json;charset=utf-8," + encodeURIComponent(format))
+    $("#backupModal").show()
+})
+
 loadPuzzles()
 
 window.onload = async () => {

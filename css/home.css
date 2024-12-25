@@ -24,6 +24,12 @@ nav{
     display: flex;
     align-items: center;
     font-weight: 900;
+    justify-content: space-between;
+}
+
+nav > div{
+    display: flex;
+    align-items: center;
 }
 
 #nav__logo{
@@ -152,11 +158,11 @@ main > *{
     font-weight: bold;
 }
 
-#aboutSite{
+#aboutSite, #backup{
     margin-left: auto;
-    display: inline-block;
     outline: none;
     color: white;
+    display: inline-block;
 }
 
 .smallbtn {
@@ -229,15 +235,16 @@ main > *{
     color: red;
 }
 
-#info{
+.BigModal{
     animation: none;
     line-height: 24px;
     font-size: 18px;
 }
 
-#info h1{
+.BigModal h1{
     margin: 20px 0;
     display: block;
+    color: black;
 }
 
 a{
@@ -249,6 +256,13 @@ a{
 a:hover{
     text-decoration: underline;
     filter: brightness(0.8);
+}
+
+#backup_textarea{
+    width: 100%;
+    padding: 10px;
+    height:200px;
+    overflow: auto;
 }
 
 @keyframes in {
