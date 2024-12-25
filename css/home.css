@@ -178,6 +178,14 @@ main > *{
     }
 }
 
+@media (max-width: 800px){
+
+    #choose__options .puzzle squaredle-puzzle{
+        width: calc(100% - 10px) !important;
+    }
+}
+
+
 /* The Modal (background) */
 .BigModal {
     display: none; /* Hidden by default */

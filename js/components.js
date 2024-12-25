@@ -58,7 +58,7 @@ class Puzzle extends LitElement {
 
     render() {
         return html`
-            <div id="puzzle" style="grid-template-columns: ${"1fr ".repeat(this.size)}">
+            <div id="puzzle" style="grid-template-columns: ${"minmax(0, 1fr) ".repeat(this.size)}; grid-template-rows: ${"minmax(0, 1fr) ".repeat(this.size)}">
                 ${[...(this.puzzle)].map((e, i)=>{return html`<squaredle-square content="${e}" style="width:100%;" ?read_only=${this.read_only} disabled=${e==="\x09" || e==="\0" ? "true" : "false"} data-x=${i % this.size} data-y=${Math.floor(i / this.size)}></squaredle-square>`})}
             </div>
         `
