@@ -84,4 +84,8 @@ window.onload = async () => {
     for (let c of document.querySelectorAll("squaredle-puzzle")){
         c.request_resize()
     }
+
+    if (top != self){
+        $("#notice").show()
+    }
 }
