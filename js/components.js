@@ -2,7 +2,7 @@ import {
     html,
     css,
     LitElement
-} from "https://unpkg.com/lit@2.0.0-rc.2/index.js?module";
+} from "https://cdn.jsdelivr.net/gh/lit/dist@3/core/lit-core.min.js";
 
 class Puzzle extends LitElement {
     static get properties(){
