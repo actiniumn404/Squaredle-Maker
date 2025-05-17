@@ -369,9 +369,7 @@ label[for="name_input"]{
     top: 25px; /* 30px from the bottom */
 }
 
-#aboutSite{
-    margin-left: auto;
-    display: inline-block;
+#aboutSite, #announceButton{
     outline: none;
     color: white;
 }
@@ -790,6 +788,73 @@ input:checked + .slider:before {
     opacity: var(--required);
 }
 
+nav > div{
+    margin-left: auto;
+}
+
+#announcements h1{
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+#announcements h1 div{
+    background: #c7d2fe;
+    padding: 15px;
+    border-radius: 10px;
+}
+
+#announcements h1 a{
+    color: #4338ca;
+    text-decoration: none;
+}
+
+#announcements .close{
+    margin-left: auto;
+}
+
+.announcement{
+    background: whitesmoke;
+    padding: 20px;
+    border-radius: 10px;
+}
+
+.announcement .header{
+    font-weight: bold;
+}
+
+.announcement .about{
+    font-weight: bold;
+}
+
+.announcement .content{
+    white-space: pre-wrap;
+}
+
+#announcements_wrapper{
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.announcement table td{
+    font-weight: bold;
+    padding-right: 20px;
+}
+
+#estimation{
+    display: flex;
+}
+
+#questionRatings{
+    margin-left: auto;
+    margin-right: 30px;
+    cursor: pointer;
+}
+
+.star{
+    color: #f23636;
+}
 
 @keyframes reveal_title{
     from{

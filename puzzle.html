@@ -42,7 +42,10 @@
 <nav>
     <a href="index.html"><img src="assets/logo.svg" height="64" alt="M" id="nav__logo"></a>
     <input id="name_input" value="" maxlength="40">
-    <button id="aboutSite" class="smallbtn"><i class="fa-solid fa-circle-info"></i></button>
+    <div>
+        <button id="announceButton" class="smallbtn"><i class="fa-solid fa-bullhorn"></i></button>
+        <button id="aboutSite" class="smallbtn"><i class="fa-solid fa-circle-info"></i></button>
+    </div>
 </nav>
 <div id="actionbar">
     <button id="changeSettings" class="smallbtn" description="Settings"><i class="fas fa-gear"></i></button>
@@ -218,6 +221,32 @@
         <div id="bonusWords">Loading...</div>
         <!--<h1 style="font-size: 24px;">Watchlist</h1>
         <div id="watchlistWords">Loading...</div>-->
+    </div>
+</div>
+
+<div id="announcements"  class="BigModal">
+    <div class="modal-content">
+        <h1>Announcements from&#20;<div><a href="https://discord.gg/C2shcQgYJZ" target="_blank">#puzzle-ideas</a></div> <span class="close">&times;</span></h1>
+
+        <div id="announcements_wrapper">
+            <div class="announcement">
+                <div class="header">Difficulty Guide</div>
+                <div class="about">From the Submit Form</div>
+                <div class="content">
+Difficulty is affected by word count and by the difficulty of the required words themselves.
+
+Use the required word count chart below as a guide.
+
+                    <table>
+                        <tr><td><i class="fa-solid fa-star"></i></td><td>18 required words</td></tr>
+                        <tr><td><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></td><td>25 required words</td></tr>
+                        <tr><td><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></td><td>35 required words</td></tr>
+                        <tr><td><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></td><td>50 required words</td></tr>
+                        <tr><td><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></td><td>70+ required words</td></tr>
+                    </table></div>
+            </div>
+
+        </div>
     </div>
 </div>
 

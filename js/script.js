@@ -306,6 +306,10 @@ $("#process").click(async () => {
 
     $("#results__analysis").show()
 
+    $("#questionRatings").click(() => {
+        $("#announcements").show()
+    })
+
 
     //if (resu["error"]) {
     //    return $("#results").html(`<strong style="color: var(--theme)">ERROR: ${res["error"]}</strong>`)
@@ -552,6 +556,10 @@ $("#aboutSite").click(()=>{
 
 $("#wordSort").click(()=>{
     $("#wordSortModal").show()
+})
+
+$("#announceButton").click(()=>{
+    $("#announcements").show()
 })
 
 $("#addRequired").click(()=>{

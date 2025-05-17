@@ -83,7 +83,7 @@ class Solver {
             awkward: 0,
             awkward_list: [],
             words: 0,
-            wps: {} // words per square
+            wps: {}, // words per square
         }
         this.start = 0
         this.bonus_count = 0
@@ -211,8 +211,34 @@ class Solver {
             this.display_analysis()
             this.tally_wps()
 
-            $("#time_numwords").html(`${this.analysis.words} result${this.analysis.words !== 1 ? "s" : ""}
-            in ${((Date.now() - this.start) / 1000).toFixed(2)} seconds<br> (${this.analysis.words - this.bonus_count} Required and ${this.bonus_count} Bonus)`)
+            let required = this.analysis.words - this.bonus_count;
+            let difficulty = 1;
+
+
+            if (required <= 25){
+                difficulty = 1;
+            }else if (required <= 35){
+                difficulty = 2
+            }else if (required <= 50){
+                difficulty = 3
+            }else if (required < 70){
+                difficulty = 4
+            }else if (required >=70){
+                difficulty = 5
+            }
+
+            console.log(required, difficulty)
+
+
+
+            $("#time_numwords").html(`
+                ${this.analysis.words} result${this.analysis.words !== 1 ? "s" : ""}
+                in ${((Date.now() - this.start) / 1000).toFixed(2)} seconds<br> (${this.analysis.words - this.bonus_count} Required and ${this.bonus_count} Bonus)
+                <br><br>
+                <div id="estimation">
+                    <div>Estimated: ${'<i class="fa-solid fa-star star"></i>'.repeat(difficulty)}</div> 
+                    <div id="questionRatings"><i class="fa-regular fa-circle-question"></i></div>
+                </div>`)
 
             if (this.analysis.awkward_list.length){
                 $("#warnings").css("display", "flex")
