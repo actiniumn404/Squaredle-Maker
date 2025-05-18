@@ -1,0 +1,15 @@
+:root{
+    --width: 1000px;
+    --theme: #b91c1c; /* Tailwind Red-700 */
+    --theme-bright: rgb(242, 54, 54);
+    --color: white;
+    --padding: calc((100% - var(--width)) / 2);
+    --secondary: #27272a; /* Zinc800 */
+    --tertiary: #262626; /* Neutral700 */
+    --modal-bg: #262626; /* Neutral700 */
+    --border-border: #b0b0b0;
+    --smallbtn-color: lightgray;
+    --main-bg: #18181b;
+    --flagged-words: #c084fc; /* Purple400 */
+    --modal-border: #d6d3d1; /* Stone300 */
+}

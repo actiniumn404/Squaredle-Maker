@@ -29,7 +29,7 @@ body{
 }
 
 .result_word.awkward{
-    color: mediumpurple;
+    color: var(--flagged-words);
 }
 
 .result_word:hover{

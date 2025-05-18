@@ -2,15 +2,9 @@
     box-sizing: border-box;
 }
 
-:root{
-    --width: 1000px;
-    --padding: calc(50vw - var(--width) / 2);
-    --theme: #b82828;
-    --color: white;
-}
 
 body{
-    background: #212121;
+    background: var(--main-bg);
     margin: 0;
     color: var(--color);
     font-family: Arial, serif;
@@ -45,7 +39,7 @@ main > *{
 }
 
 .puzzle {
-    background: #2D2D2A;
+    background: var(--tertiary);
     padding: 20px 15px;
     border: 1px solid #626262;
     border-radius: 4px;
@@ -79,7 +73,7 @@ main > *{
 }
 
 #choose{
-    background: #2a2a2a;
+    background: var(--secondary);
     padding: 20px var(--padding);
 }
 
@@ -127,7 +121,7 @@ main > *{
     display: flex;
     flex-direction: column;
     align-self: stretch;
-    background: #2D2D2A;
+    background: var(--tertiary);
     padding: 20px 20px 10px 20px;
     cursor: pointer;
     transition: 0.2s;
