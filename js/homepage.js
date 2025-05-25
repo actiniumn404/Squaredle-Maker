@@ -23,7 +23,7 @@ const loadPuzzles = ()=>{
             <div class="puzzle" id="myPuzzle${count}">
                 <squaredle-puzzle size="${puzzle.size}" puzzle="${puzzle.puzzle.replaceAll("\0", "\x09")}" style="width: 100%;" read_only>Loading...</squaredle-puzzle>
             </div>
-            <div class="myPuzzle__name">${puzzle.name}</div>
+            <div class="myPuzzle__name">${puzzle.name.replaceAll('<', '&lt;').replaceAll('>', '&gt;')}</div>
         </a>`)
         //fill("#myPuzzle"+count, Number(puzzle.size), puzzle.puzzle, Number(puzzle.size) + 1)
         count++
