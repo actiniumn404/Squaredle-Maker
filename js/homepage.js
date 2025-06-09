@@ -48,8 +48,8 @@ $("#aboutSite").click(()=>{
 
 $("#backup").click(() => {
     let json = {
-        puzzles: JSON.parse(localStorage.puzzles ?? {}),
-        manualSort: JSON.parse(localStorage.manualSort ?? {})
+        puzzles: JSON.parse(localStorage.puzzles ?? "[]"),
+        manualSort: JSON.parse(localStorage.manualSort ?? "{}")
     }
 
     let format = JSON.stringify(json)
@@ -89,3 +89,95 @@ window.onload = async () => {
         $("#notice").show()
     }
 }
+
+let currentFile = ""
+
+document.getElementById("merge_file").onchange = (event) => {
+    let file = event.target.files[0]
+    $("#merge_button").prop("disabled", true)
+    const reader = new FileReader();
+    reader.onload = () => {
+        currentFile = reader.result
+        try {
+            JSON.parse(currentFile)
+        }catch{
+            alert("Error reading file. File is not in correct format. Please try again.")
+            document.getElementById("merge_file").value = null
+        }
+        console.log(currentFile)
+        $("#merge_button").prop("disabled", false)
+    };
+    reader.onerror = () => {
+        alert("Whoops, something went wrong while reading your file")
+    };
+    reader.readAsText(file);
+
+}
+
+$("#merge_button").click(async ()=>{
+    let text = $("#merge_textarea").val();
+    let file = currentFile;
+
+    let process = "";
+
+    if (!text && !file){
+        alert("Please insert something!")
+        return null
+    }
+
+    if (file){
+        process = file
+    }else{
+        process = text;
+    }
+
+    try {
+        JSON.parse(process)
+    }catch{
+        alert("Error reading file or text. None are in the correct format. Please try again.")
+        return null
+    }
+
+    process = JSON.parse(process)
+
+    let stagingPuzzles = JSON.parse(localStorage.puzzles ?? "[]")
+    let stagingSort = JSON.parse(localStorage.manualSort ?? "{}")
+
+    if (process.puzzles){
+        for (let puzzle of process.puzzles){
+            stagingPuzzles.push(puzzle)
+        }
+    }
+
+    if (!stagingSort.words){
+        stagingSort.words = []
+    }
+    if (!stagingSort.bonus){
+        stagingSort.bonus = []
+    }
+
+    if (process.manualSort && process.manualSort.words){
+        for (let word of process.manualSort.words){
+            if (!stagingSort.bonus.includes(word) && !stagingSort.words.includes(word)){
+                stagingSort.words.push(word)
+            }
+        }
+    }
+
+    if (process.manualSort && process.manualSort.bonus){
+        for (let word of process.manualSort.bonus){
+            if (!stagingSort.bonus.includes(word) && !stagingSort.words.includes(word)){
+                stagingSort.bonus.push(word)
+            }
+        }
+    }
+
+    localStorage.puzzles = JSON.stringify(stagingPuzzles)
+
+    localStorage.manualSort = JSON.stringify(stagingSort)
+
+
+    alert("Merge complete. Refreshing page.")
+
+    location.reload();
+})

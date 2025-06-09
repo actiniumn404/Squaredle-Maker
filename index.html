@@ -102,9 +102,28 @@
 
 <div id="backupModal" class="BigModal">
     <div class="modal-content">
-        <h1>Backup Puzzles <span class="close">&times;</span></h1>
-        <textarea id="backup_textarea"></textarea><br>
-        <a id="backup_download">Download</a>
+        <div id="backup_wrapper">
+            <h1><i class="fa-solid fa-download"></i> Backup Puzzles <span class="close">&times;</span></h1>
+            <textarea id="backup_textarea"></textarea><br>
+            <a id="backup_download">Download</a>
+        </div>
+
+        <div id="merge_wrapper">
+            <h1><i class="fa-solid fa-upload"></i> Merge Backup</h1>
+            This will attempt to merge the content of your backup with the version currently open. No puzzles will be deleted.
+            If a word is sorted differently in the backup and the version currently open, the word's sorting in the current version will be preserved.
+            <div id="merge_options_wrapper">
+                <div id="merge_textbox">
+                    <div>Merge from Text</div>
+                    <textarea id="merge_textarea" placeholder="Copy paste your backed up code here"></textarea>
+                </div>
+                <div id="upload">
+                    <div>Merge from File</div>
+                    <input type="file" id="merge_file" />
+                </div>
+            </div>
+            <button id="merge_button">Merge my backup!</button>
+        </div>
     </div>
 </div>
 
