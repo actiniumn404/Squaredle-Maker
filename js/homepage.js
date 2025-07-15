@@ -86,8 +86,11 @@ window.onload = async () => {
     information = await information.text()
     $("#info .modal-content").html(information)
 
-    $(".BigModal .close").click((e)=>{
+    $(".BigModal:not(#backupModal) .close").click((e)=>{
         $(e.currentTarget).parent().parent().parent().hide()
+    })
+    $("#backupModal .close").click((e)=>{
+        $(e.currentTarget).parent().parent().parent().parent().hide()
     })
 
     for (let c of document.querySelectorAll("squaredle-puzzle")){
