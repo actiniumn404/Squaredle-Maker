@@ -19,12 +19,21 @@ const loadPuzzles = ()=>{
 
     let count = 0
     for (let puzzle of puzzles){
+        try{
         $("#recent__wrapper").append(`<a class="myPuzzle" href="puzzle.html?puzzle=${count}">
             <div class="puzzle" id="myPuzzle${count}">
                 <squaredle-puzzle size="${puzzle.size}" puzzle="${puzzle.puzzle.replaceAll("\0", "\x09")}" style="width: 100%;" read_only>Loading...</squaredle-puzzle>
             </div>
             <div class="myPuzzle__name">${puzzle.name.replaceAll('<', '&lt;').replaceAll('>', '&gt;')}</div>
         </a>`)
+        }catch{
+            $("#recent__wrapper").append(`<a class="myPuzzle" href="puzzle.html?puzzle=${count}">
+            <div class="puzzle" id="myPuzzle${count}">
+            Error
+            </div>
+            <div class="myPuzzle__name">Error</div>
+        </a>`)
+        }
         //fill("#myPuzzle"+count, Number(puzzle.size), puzzle.puzzle, Number(puzzle.size) + 1)
         count++
     }

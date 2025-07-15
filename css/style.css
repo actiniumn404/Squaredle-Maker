@@ -849,6 +849,11 @@ nav > div{
     color: var(--theme-bright);
 }
 
+#failsafe{
+    width: 100%;
+    min-height: 300px;
+}
+
 @keyframes reveal_title{
     from{
         top: 120%;

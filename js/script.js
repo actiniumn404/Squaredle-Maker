@@ -616,7 +616,26 @@ const alert = (text) => {
 let game;
 
 window.onload = async () => {
-    game = new Game()
+    try {
+        game = new Game()
+    }catch{
+        $("#buggedFailSafe").show()
+        $("#buggedFailSafe h1").css("margin-top", $("#deletePopup").height() + 120)
+        $("#deletePopup").show()
+        $(".deletename").html("nothing (you'd normally need to write the puzzle name but the puzzle is bugged) ")
+        $("#deleteInput").remove()
+        $("#deleteDelete").prop("disabled", false)
+        try{
+            let puzzle_raw =  JSON.parse(localStorage.puzzles)[Number(new URLSearchParams(window.location.search).get("puzzle"))]
+            console.log(puzzle_raw)
+            let size = puzzle_raw.size
+            let puzzle = puzzle_raw.puzzle.replaceAll("\0", "[Blank]").replaceAll(" ", "~")
+            let name = puzzle_raw.name
+            $("#failsafe").val(`Puzzle Name: ${name}\nPuzzle Size: ${size}\nPuzzle: ${puzzle}\n^ Tildes (~) represent spaces. The string above contains all rows of the puzzle in order: first row, then second, third, etc. without line breaks.`)
+        }catch{
+            $("#failsafe").val("We could not retrieve the puzzle data")
+        }
+    }
     Utils.const.manualSort = new ManualWordSort()
 
     let information = await fetch("info.html")
