@@ -180,6 +180,8 @@ class Puzzle extends LitElement {
 
         items.forEach(e=>e.css("background", `none`).hide())
 
+        let timeout_duration_ms = Number($("#settings__timeout").val())
+
         for (let [col, row] of path){
 
             if (state !== show_path_index){ // abort!
@@ -188,12 +190,12 @@ class Puzzle extends LitElement {
 
             let item = items[col * game.puzzle.size + row]
             item
-                .css("background", `hsl(${280 / path.length * i}, 100%, 50%)`)
+                .css("background", `hsl(${360 / path.length * i}, 100%, 50%)`)
                 .css("width", `calc(${item.parent().width()}px * (1 - ${0.5 / path.length * i}))`)
                 .css("height", `calc(${item.parent().height()}px * (1 - ${0.5 / path.length * i}))`)
                 .show()
             i++;
-            await timeout(300);
+            await timeout(timeout_duration_ms);
         }
     }
 }
