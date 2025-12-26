@@ -641,3 +641,10 @@ let resize_loop = setInterval(()=>{
 }, 100)
 
 let word_definition_box_offset = null;
+
+$("#awkward_show").click(() => {
+    for (let word of Utils.const.results.analysis.awkward_list){
+        game.puzzle.show_path(word.path, 0, false)
+    }
+    $("#hidePath").show()
+})

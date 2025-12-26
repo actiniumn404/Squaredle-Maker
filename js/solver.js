@@ -303,25 +303,38 @@ class Solver {
         this.list_bonus = new Set(Utils.const.results.result["Bonus"].map(e=>e.word))
 
         let display_stats = (element) => {
-            if (Number(element.style.opacity) === 0.5){
-                $("#analysis_wps_content").hide()
-                element.style.opacity = 1
-                return
-            }
 
-            let x = $(element).data("x")
-            let y = $(element).data("y")
+            let x = Number($(element).data("x"))
+            let y = Number($(element).data("y"))
             let results = Utils.const.results.analysis.wps[y+","+x]
+
+            let items = [...document.getElementById("analysis_wps_puzzle").container.children].map(e=>$(e.container).find(".squareCircle"))
+
+            let item = items[y * game.puzzle.size + x]
+
+            let repeat = item.data("active") === "yes";
+
+            items.forEach(e=>e.css("background", `none`).hide().data("active", "no"))
+
+            if (repeat){
+                return
+            }
+            item
+                .css("background", `hsl(${360}, 100%, 50%)`)
+                .css("width", `calc(${item.parent().width()}px * (1 - ${0.1}))`)
+                .css("height", `calc(${item.parent().height()}px * (1 - ${0.1}))`)
+                .css("animation", "none")
+                .show()
+
+            item.data("active", "yes")
+
             if (!results){
-                $("#analysis_wps_required").text("N/A (This square is disabled)")
-                $("#analysis_wps_bonus").text("N/A (This square is disabled)")
-                $("#analysis_wps_total").text("N/A (This square is disabled)")
+                $("#analysis_wps_required").text("0")
+                $("#analysis_wps_bonus").text("0")
+                $("#analysis_wps_total").text("0")
                 return
             }
 
-            [...$("#analysis_words_per_square squaredle-puzzle").prop("container").children].map(e=>{if (!e.disabled){e.style.opacity=1}})
-
-            element.style.opacity = 0.5
             $("#analysis_wps_content").show()
 
 
@@ -330,6 +343,25 @@ class Solver {
             $("#analysis_wps_required").text(results.length - is_bonus.length)
             $("#analysis_wps_bonus").text(is_bonus.length)
             $("#analysis_wps_total").text(results.length)
+
+            let words = new Set()
+
+            for (let word of results){
+                words.add(word.word)
+            }
+
+            $("#square_show").click(() => {
+                $("#results .result_word").removeClass("highlight")
+                $("#results .result_word").each((i, e) => {
+                    if (words.has(e.innerText)){
+                        $(e).addClass("highlight")
+                    }
+                })
+            })
+
+            $("#square_hide").click(() => {
+                $("#results .result_word").removeClass("highlight")
+            })
         }
 
         $("#solvingModal").css("display", "flex")
@@ -401,6 +433,8 @@ class Solver {
                 $($("#puzzle").prop("container")).addClass(cls)
             }
         })
+
+        document.getElementById("analysis_wps_puzzle").setAttribute("puzzle", game.puzzle.get_puzzle)
     }
 
     tally_wps(){

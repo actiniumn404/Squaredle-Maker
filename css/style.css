@@ -665,14 +665,15 @@ body.fullscreen aside:hover::after, body.fullscreen aside:hover::before{
     border-radius: 8px;
     text-align: left;
 
-    display: none;
+    visibility: hidden;
     content: attr(description);
     animation: hide_title 0.2s ease;
     animation-fill-mode: forwards;
+    pointer-events: none; /* critical */
 }
 
 #actionbar > *:hover:not(.notitle)::after{
-    display: block;
+    visibility: visible;
     content: attr(description);
     animation: reveal_title 0.2s ease;
     animation-fill-mode: forwards;
@@ -852,6 +853,10 @@ nav > div{
 #failsafe{
     width: 100%;
     min-height: 300px;
+}
+
+#square_show, #square_hide{
+    margin-top: 5px;
 }
 
 @keyframes reveal_title{

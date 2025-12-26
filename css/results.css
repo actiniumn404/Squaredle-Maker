@@ -32,6 +32,10 @@ body{
     color: var(--flagged-words);
 }
 
+.result_word.highlight{
+    color: #facc15;
+}
+
 .result_word:hover{
     opacity: 0.8;
 }

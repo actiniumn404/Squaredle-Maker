@@ -106,6 +106,7 @@ class Puzzle extends LitElement {
     }
 
     async rotateRight(time){
+        this.puzzle = this.get_puzzle
         document.getElementById("puzzle").style.transition = time + "ms"
         document.getElementById("puzzle").style.transform = "rotate(90deg)"
 
@@ -119,6 +120,8 @@ class Puzzle extends LitElement {
         document.getElementById("puzzle").style.transition = "none"
         document.getElementById("puzzle").style.transform = "none"
 
+        console.log(this.puzzle_array.map((val, index) => this.puzzle_array.map(row => row[index]).join("")).join(""))
+        console.log(this.puzzle_array.map((val, index) => this.puzzle_array.map(row => row[index]).reverse().join("")).join(""))
         this.puzzle = this.puzzle_array.map((val, index) => this.puzzle_array.map(row => row[index]).reverse().join("")).join("")
 
         for (let child of this.container.children){
@@ -126,9 +129,12 @@ class Puzzle extends LitElement {
             child.style.transform = "none"
         }
 
+        this.render()
+
     }
 
     async rotateLeft(time){
+        this.puzzle = this.get_puzzle
         document.getElementById("puzzle").style.transition = time + "ms"
         document.getElementById("puzzle").style.transform = "rotate(-90deg)"
 
@@ -149,6 +155,8 @@ class Puzzle extends LitElement {
             child.style.transition = "none"
             child.style.transform = "none"
         }
+
+        this.render()
 
     }
 
@@ -172,19 +180,21 @@ class Puzzle extends LitElement {
         [this.puzzle, this.size] = [puzzle, new_size]
     }
 
-    async show_path(path){
+    async show_path(path, timeout_duration_ms, hide=true){
         let items = [...this.container.children].map(e=>$(e.container).find(".squareCircle"))
 
         let i = 0;
         let state = ++show_path_index
 
-        items.forEach(e=>e.css("background", `none`).hide())
+        if (hide){
+            items.forEach(e=>e.css("background", `none`).hide())
+        }
 
-        let timeout_duration_ms = Number($("#settings__timeout").val())
+        timeout_duration_ms = timeout_duration_ms ?? Number($("#settings__timeout").val())
 
         for (let [col, row] of path){
 
-            if (state !== show_path_index){ // abort!
+            if (state !== show_path_index && hide){ // abort!
                 return
             }
 
@@ -235,6 +245,7 @@ class PuzzleSquare extends LitElement{
                 justify-content: center;
                 cursor: pointer;
                 width: 100%;
+                position: relative;
             }
             input{
                 width: 100%;
