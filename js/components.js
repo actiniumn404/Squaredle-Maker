@@ -171,7 +171,34 @@ class Puzzle extends LitElement {
 
         [this.puzzle, this.size] = [puzzle, new_size]
     }
+
+    async show_path(path){
+        let items = [...this.container.children].map(e=>$(e.container).find(".squareCircle"))
+
+        let i = 0;
+        let state = ++show_path_index
+
+        items.forEach(e=>e.css("background", `none`).hide())
+
+        for (let [col, row] of path){
+
+            if (state !== show_path_index){ // abort!
+                return
+            }
+
+            let item = items[col * game.puzzle.size + row]
+            item
+                .css("background", `hsl(${280 / path.length * i}, 100%, 50%)`)
+                .css("width", `calc(${item.parent().width()}px * (1 - ${0.5 / path.length * i}))`)
+                .css("height", `calc(${item.parent().height()}px * (1 - ${0.5 / path.length * i}))`)
+                .show()
+            i++;
+            await timeout(300);
+        }
+    }
 }
+
+let show_path_index = 0; // bad practice but...
 
 class PuzzleSquare extends LitElement{
     static get properties(){

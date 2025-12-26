@@ -482,23 +482,10 @@ function timeout(ms) { // Awesome function
 }
 
 $("#wordPath").click(async () => {
-    $("#wordDef").hide()
     let path = Utils.const.active.path;
-    let i = 0;
-    let items = [...game.puzzle.container.children].map(e=>$(e.container).find(".squareCircle"))
 
-    items.forEach(e=>e.css("background", `none`).hide())
+    await game.puzzle.show_path(path)
 
-    for ([col, row] of path){
-        let item = items[col * game.puzzle.size + row]
-        item
-            .css("background", `hsl(${280 / path.length * i}, 100%, 50%)`)
-            .css("width", `calc(${item.parent().width()}px * (1 - ${0.5 / path.length * i}))`)
-            .css("height", `calc(${item.parent().height()}px * (1 - ${0.5 / path.length * i}))`)
-            .show()
-        i++;
-        await timeout(400);
-    }
     $("#hidePath").show()
 })
 
@@ -652,3 +639,5 @@ let resize_loop = setInterval(()=>{
         c.request_resize()
     }
 }, 100)
+
+let word_definition_box_offset = null;

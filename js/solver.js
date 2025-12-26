@@ -31,6 +31,7 @@ class Word{
         this.word = word
         this.path = path
         this.flags = []
+        this.alternate_paths = []
 
         this.frequency = undefined
         this.awkward = undefined
@@ -44,6 +45,10 @@ class Word{
 
     add_path(path){
         this.path.push(path)
+    }
+
+    add_alternate_path(path) {
+        this.alternate_paths.push(path)
     }
 
     pop(){
@@ -69,6 +74,17 @@ class Word{
             awkward: this.awkward,
             bonus: this.bonus
         }
+    }
+
+    clone() {
+        let clone = Object.assign(Object.create(Object.getPrototypeOf(this)), this)
+
+        // Manually deep copy specific nested arrays/objects
+        this.path = [...this.path]
+        this.alternate_paths = [...this.alternate_paths]
+        this.flags = [...this.flags]
+
+        return clone;
     }
 }
 
@@ -117,7 +133,7 @@ class Solver {
             if (!Object.keys(this.result).includes(cur.word.length.toString())) {
                 this.result[cur.word.length] = []
             }
-            let obj = Object.assign(Object.create(Object.getPrototypeOf(cur)), cur)
+            let obj = cur.clone()
             obj.path = [...cur.path]
             obj.frequency = corpus.freq
             obj.bonus = (obj.frequency < this.cutoff || Utils.const.manualSort.isBonus(obj.word)) && !Utils.const.manualSort.isRequired(obj.word)
@@ -137,7 +153,8 @@ class Solver {
         }
 
         this.seen[col][row] = true
-        for (let [cRow, cCol] of [[0, 1], [0, -1], [1, 1], [1, 0], [1, -1], [-1, 1], [-1, 0], [-1, -1]]) {
+        // Better DFS that is more accurate to Squaredle
+        for (let [cRow, cCol] of [[-1, -1], [0, -1], [1, -1], [-1, 0], [1, 0], [-1, 1], [0, 1], [1, 1]]) {
             if (row+cRow < 0 || col+cCol < 0 || row+cRow >= this.size || col+cCol >= this.size || !corpus.children.hasOwnProperty(this.grid[col+cCol][row+cRow])){
                 continue;
             }
@@ -162,7 +179,8 @@ class Solver {
 
         for (let category in this.result) {
             let width = 70
-            let word_list = Utils.remove_duplicates(this.result[category])
+            this.result[category] = Utils.remove_duplicates(this.result[category])
+            let word_list = this.result[category]
             if (!word_list.length){
                 continue
             }
@@ -205,7 +223,6 @@ class Solver {
             $("#results ul li").click((e)=>{
                 e = $(e.currentTarget)
                 Utils.show_word(e.html())
-                Utils.const.active = e.data("word")
             })
 
             this.display_analysis()
