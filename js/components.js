@@ -7,10 +7,10 @@ import {
 class Puzzle extends LitElement {
     static get properties(){
         return {
-            size: {type: Number},
-            puzzle: {type: String},
-            read_only: {type: Boolean},
-            name: {type: String}
+            size: {type: Number, reflect: true},
+            puzzle: {type: String, reflect: true},
+            read_only: {type: Boolean, reflect: true},
+            name: {type: String, reflect: true}
         }
     }
 
@@ -75,15 +75,17 @@ class Puzzle extends LitElement {
 
     render() {
         return html`
-            <div id="puzzle" style="grid-template-columns: ${"minmax(0, 1fr) ".repeat(this.size)}; grid-template-rows: ${"minmax(0, 1fr) ".repeat(this.size)}">
-                ${[...(this.puzzle)].map((e, i)=>{return html`<squaredle-square content="${e}" style="width:100%;" ?read_only=${this.read_only} disabled=${e==="\x09" || e==="\0" ? "true" : "false"} data-x=${i % this.size} data-y=${Math.floor(i / this.size)}></squaredle-square>`})}
+            <div id="puzzle"
+                 style="grid-template-columns: ${"minmax(0, 1fr) ".repeat(this.size)}; grid-template-rows: ${"minmax(0, 1fr) ".repeat(this.size)}"
+            >
+                ${[...(this.puzzle)].map((e, i)=>{return html`<squaredle-square @modification=${this.square_content_modification} content="${e}" style="width:100%;" ?read_only=${this.read_only} disabled=${e==="\x09" || e==="\0" ? "true" : "false"} data-x=${i % this.size} data-y=${Math.floor(i / this.size)}></squaredle-square>`})}
             </div>
         `
     }
 
-    clickEvent(e) {
-        alert("clicked")
-        this.element.parentElement.dispatchEvent(new SubmitEvent());
+    square_content_modification() {
+        this.puzzle = this.get_puzzle
+        console.log("Square Content Successfully Modified")
     }
 
     get json(){
@@ -106,7 +108,6 @@ class Puzzle extends LitElement {
     }
 
     async rotateRight(time){
-        this.puzzle = this.get_puzzle
         document.getElementById("puzzle").style.transition = time + "ms"
         document.getElementById("puzzle").style.transform = "rotate(90deg)"
 
@@ -120,8 +121,6 @@ class Puzzle extends LitElement {
         document.getElementById("puzzle").style.transition = "none"
         document.getElementById("puzzle").style.transform = "none"
 
-        console.log(this.puzzle_array.map((val, index) => this.puzzle_array.map(row => row[index]).join("")).join(""))
-        console.log(this.puzzle_array.map((val, index) => this.puzzle_array.map(row => row[index]).reverse().join("")).join(""))
         this.puzzle = this.puzzle_array.map((val, index) => this.puzzle_array.map(row => row[index]).reverse().join("")).join("")
 
         for (let child of this.container.children){
@@ -134,7 +133,6 @@ class Puzzle extends LitElement {
     }
 
     async rotateLeft(time){
-        this.puzzle = this.get_puzzle
         document.getElementById("puzzle").style.transition = time + "ms"
         document.getElementById("puzzle").style.transform = "rotate(-90deg)"
 
@@ -215,16 +213,16 @@ let show_path_index = 0; // bad practice but...
 class PuzzleSquare extends LitElement{
     static get properties(){
         return {
-            content: {type: String},
-            disabled: {type: Boolean},
-            read_only: {type: Boolean},
-            marked: {type: Boolean}
+            content: {type: String, reflect: true},
+            disabled: {type: Boolean, reflect: true},
+            read_only: {type: Boolean, reflect: true},
+            marked: {type: Boolean, reflect: true}
         }
     }
 
     constructor(){
         super()
-        this.content = " "
+        this.content = ""
         this.disabled = false
         this.read_only = false
     }
@@ -293,14 +291,30 @@ class PuzzleSquare extends LitElement{
     }
 
     render(){
+        this.normalize()
+
+        if (this.input){
+            this.input.value = this.content
+        }
+
         this.disabled = this.getAttribute("disabled") === "true"
         this.oncontextmenu = (e)=>{this._handle_contextmenu(e)}
-        return html`<div id="container" disabled=${this.disabled ? "true" : "false"}><div class="squareCircle"></div><input maxlength="1" value=${this.content.trim()} ?disabled=${this.read_only} @change=${this.handle_change} @keyup=${this.handle_change}></div>`
+        return html`
+            <div id="container" disabled=${this.disabled ? "true" : "false"}>
+                <div class="squareCircle"></div>
+                <input id="input" maxlength="1" value=${this.content} ?disabled=${this.read_only} @change=${this.handle_change} @keyup=${this.handle_change} />
+            </div>`
+    }
+
+    normalize() {
+        this.content = this.content.trim().toUpperCase()
+        this.disabled = this.getAttribute("disabled") === "true"
     }
 
     handle_change(e){
         this.content = this.input.value
-        this.disabled = this.getAttribute("disabled") === "true"
+        this.normalize()
+        this.dispatchEvent(new CustomEvent('modification', {}))
     }
 
     _handle_contextmenu(e){
