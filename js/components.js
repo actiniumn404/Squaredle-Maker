@@ -88,6 +88,19 @@ class Puzzle extends LitElement {
         console.log("Square Content Successfully Modified")
     }
 
+    update_puzzle_to(puzzle){
+        if (!this.container){
+            return;
+        }
+        console.log(puzzle)
+        this.puzzle = puzzle
+        let i = 0;
+        for (let square of this.container.children){
+            square.update_input_to(puzzle[i])
+            i++;
+        }
+    }
+
     get json(){
         return {
             name: this.name,
@@ -121,12 +134,14 @@ class Puzzle extends LitElement {
         document.getElementById("puzzle").style.transition = "none"
         document.getElementById("puzzle").style.transform = "none"
 
-        this.puzzle = this.puzzle_array.map((val, index) => this.puzzle_array.map(row => row[index]).reverse().join("")).join("")
+        this.update_puzzle_to(this.puzzle_array.map((val, index) => this.puzzle_array.map(row => row[index]).reverse().join("")).join(""))
+
 
         for (let child of this.container.children){
             child.style.transition = "none"
             child.style.transform = "none"
         }
+
 
         this.render()
 
@@ -147,7 +162,7 @@ class Puzzle extends LitElement {
         document.getElementById("puzzle").style.transform = "none"
 
 
-        this.puzzle = this.puzzle_array.map((val, index) => this.puzzle_array.map(row => row[row.length-1-index]).join("")).join("")
+        this.update_puzzle_to(this.puzzle_array.map((val, index) => this.puzzle_array.map(row => row[row.length-1-index]).join("")).join(""))
 
         for (let child of this.container.children){
             child.style.transition = "none"
@@ -290,30 +305,34 @@ class PuzzleSquare extends LitElement{
         this.input.style.fontSize = 0.5 * this.offsetHeight + "px"
     }
 
-    render(){
-        this.normalize()
+    update_input_to(content){
+        this.content = content
+        this.input.value = this.content
+    }
 
-        if (this.input){
-            this.input.value = this.content
-        }
+    render(){
+        this.update_text()
 
         this.disabled = this.getAttribute("disabled") === "true"
         this.oncontextmenu = (e)=>{this._handle_contextmenu(e)}
         return html`
             <div id="container" disabled=${this.disabled ? "true" : "false"}>
                 <div class="squareCircle"></div>
-                <input id="input" maxlength="1" value=${this.content} ?disabled=${this.read_only} @change=${this.handle_change} @keyup=${this.handle_change} />
+                <input id="input" maxlength="1" value=${this.content} ?disabled=${this.read_only} @change=${this.handle_change} @input=${this.handle_change} />
             </div>`
     }
 
-    normalize() {
+    update_text() {
+        if (this.input){
+            this.content = this.input.value
+        }
         this.content = this.content.trim().toUpperCase()
         this.disabled = this.getAttribute("disabled") === "true"
     }
 
     handle_change(e){
-        this.content = this.input.value
-        this.normalize()
+        console.log("i'm updating")
+        this.update_text()
         this.dispatchEvent(new CustomEvent('modification', {}))
     }
 
