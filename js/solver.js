@@ -434,7 +434,7 @@ class Solver {
             }
         })
 
-        document.getElementById("analysis_wps_puzzle").setAttribute("puzzle", game.puzzle.get_puzzle)
+        document.getElementById("analysis_wps_puzzle").update_puzzle_to(game.puzzle.get_puzzle)
     }
 
     tally_wps(){
