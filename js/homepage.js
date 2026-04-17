@@ -155,8 +155,21 @@ $("#merge_button").click(async ()=>{
     let stagingPuzzles = JSON.parse(localStorage.puzzles ?? "[]")
     let stagingSort = JSON.parse(localStorage.manualSort ?? "{}")
 
+    let stagingPuzzlesSet = []
+
+    for (let puzzle of stagingPuzzles){
+        stagingPuzzlesSet.push(puzzle.puzzle)
+    }
+
+    let rejected = 0;
+
     if (process.puzzles){
         for (let puzzle of process.puzzles){
+            if (stagingPuzzlesSet.includes(puzzle.puzzle)){
+                console.log("puzzle rejected: already one")
+                rejected += 1;
+                continue
+            }
             stagingPuzzles.push(puzzle)
         }
     }
@@ -189,7 +202,7 @@ $("#merge_button").click(async ()=>{
     localStorage.manualSort = JSON.stringify(stagingSort)
 
 
-    alert("Merge complete. Refreshing page.")
+    alert(`Merge complete. ${rejected} puzzles were identical to those on this device and where not merged. Refreshing page.`)
 
     location.reload();
 })
